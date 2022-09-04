@@ -1,0 +1,39 @@
+<resources>
+    <string name="app_name">POS_ver_01</string>
+
+    <string name="viewGoods1">1. Пышка</string>
+    <string name="viewGoods2">1. Пышка карт</string>
+    <string name="viewGoods3">1. Пышка твор.</string>
+    <string name="viewGoods4">1. Сет 50/50</string>
+    <string name="viewGoods5">1. Сет карт.</string>
+    <string name="viewGoods6">1. Сет классики</string>
+    <string name="viewGoods7">1. Сет твор.</string>
+    <string name="viewGoods8">1.1 Соус</string>
+    <string name="viewGoods9">2. Айс кофе</string>
+    <string name="viewGoods10">2. Америк</string>
+    <string name="viewGoods11">2. Америк Х2</string>
+    <string name="viewGoods12">2. Какао</string>
+    <string name="viewGoods13">2. Капуч</string>
+    <string name="viewGoods14">2. Капуч Х2</string>
+    <string name="viewGoods15">2. Латте</string>
+    <string name="viewGoods16">2. Мокаччино</string>
+    <string name="viewGoods17">2. Пряный</string>
+    <string name="viewGoods18">2. Пряный Х2</string>
+    <string name="viewGoods19">2. Эспресс</string>
+    <string name="viewGoods20">2. Эспресс Х2</string>
+    <string name="viewGoods21">3. Бонаква</string>
+    <string name="viewGoods22">3. Глинт</string>
+    <string name="viewGoods23">3. Коктейль</string>
+    <string name="viewGoods24">3. Лимонад</string>
+    <string name="viewGoods25">3. Сок</string>
+    <string name="viewGoods26">3. Чай</string>
+    <string name="viewGoods27">4. Морож. посыпка</string>
+    <string name="viewGoods28">4. Морож. Топинг</string>
+    <string name="viewGoods29">4. Мороженное</string>
+    <string name="viewGoods30">5. Серт. 4 Друг</string>
+    <string name="viewGoods31">5. Серт. 8 Друг</string>
+    <string name="viewGoods32">6. Канистра</string>
+    <string name="viewGoods35">Test</string>
+    <string name="viewGoods34">-</string>
+    <string name="viewGoods33">-</string>
+</resources>
