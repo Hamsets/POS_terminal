@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context="com.MainActivity">
 
 
     <ScrollView
@@ -66,6 +66,12 @@
                         android:id="@+id/btnGoods002"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i2"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -93,15 +99,17 @@
                     android:layout_height="120dp"
                     android:layout_weight="0.20">
 
+
+
                     <ImageButton
                         android:id="@+id/btnGoods003"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
 
-                        android:src="@drawable/i3"
                         android:background="@android:color/transparent"
-                        android:scaleType="centerInside"
                         android:padding="0dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/i3"
 
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
@@ -169,6 +177,12 @@
                         android:id="@+id/btnGoods005"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i5"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -392,6 +406,12 @@
                         android:id="@+id/btnGoods011"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i11"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -458,6 +478,12 @@
                         android:id="@+id/btnGoods013"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i13"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -488,6 +514,12 @@
                         android:id="@+id/btnGoods014"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i14"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -518,6 +550,12 @@
                         android:id="@+id/btnGoods015"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i15"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -554,6 +592,12 @@
                         android:id="@+id/btnGoods016"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i16"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -583,6 +627,12 @@
                         android:id="@+id/btnGoods017"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i17"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -613,6 +663,12 @@
                         android:id="@+id/btnGoods018"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i18"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -642,6 +698,12 @@
                         android:id="@+id/btnGoods019"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i19"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -671,6 +733,12 @@
                         android:id="@+id/btnGoods020"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i20"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -777,6 +845,13 @@
                         android:id="@+id/btnGoods023"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i23"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -1023,6 +1098,12 @@
                         android:id="@+id/btnGoods030"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i30"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -1058,6 +1139,12 @@
                         android:id="@+id/btnGoods031"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+
+                        android:src="@drawable/i31"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerInside"
+                        android:padding="0dp"
+
                         app:srcCompat="@drawable/ic_launcher_foreground" />
 
                     <TextView
@@ -1216,11 +1303,13 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="254dp"
             android:layout_weight="1">
 
+
+
             <TextView
-                android:id="@+id/textReceipt"
+                android:id="@+id/textCheck"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 

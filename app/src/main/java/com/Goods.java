@@ -1,4 +1,4 @@
-package com.example.pos_ver_01;
+package com;
 
 import java.math.BigDecimal;
 
@@ -35,7 +35,7 @@ public class Goods {
         this.summ = summ;
     }
 
-    public BigDecimal getSumm (){
-        return summ;
+    public String getSumm (){
+        return summ.toString();
     }
 }

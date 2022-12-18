@@ -1,4 +1,4 @@
-package com.example.pos_ver_01;
+package com;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,15 +10,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import com.example.pos_ver_01.R;
+
 import java.math.BigDecimal;
-import java.net.Socket;
-import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
-    TextView textReceipt;
+    SendClass sendClass;
+    public static final String hostServer = "192.168.1.207";
+    public static final int portServer = 51100;
+    TextView textCheck;
     Button saleBtn;
     Button cancelBtn;
     ImageButton btnGoods001;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnGoods034;
     ImageButton btnGoods035;
     Goods currGoods;
-    ArrayList<Goods> receipt;
+    Check check = new Check();
     int [] prices = {80,100,100,450,500,400,500,100,400,230,310,400,280,330,330,400,310,380,230,280,140,450,350,400,150,450,100,100,300,1600,3200,100};
 
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         //запустим приложение в горизонтальном ориентировании
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        textReceipt = (TextView) findViewById(R.id.textReceipt);
+        textCheck = (TextView) findViewById(R.id.textCheck);
         saleBtn = (Button) findViewById(R.id.saleBtn);
         cancelBtn = (Button) findViewById(R.id.cancelBtn);
         btnGoods001 = (ImageButton) findViewById(R.id.btnGoods001);
@@ -104,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
         btnGoods030 = (ImageButton) findViewById(R.id.btnGoods030);
         btnGoods031 = (ImageButton) findViewById(R.id.btnGoods031);
         btnGoods032 = (ImageButton) findViewById(R.id.btnGoods032);
-        //btnGoods033 = (ImageButton) findViewById(R.id.btnGoods033);
+        btnGoods033 = (ImageButton) findViewById(R.id.btnGoods033);
         btnGoods034 = (ImageButton) findViewById(R.id.btnGoods034);
         btnGoods035 = (ImageButton) findViewById(R.id.btnGoods035);
-        receipt = new ArrayList<Goods>();
+//        check = new ArrayList<Goods>();
 
 
 
@@ -117,129 +118,117 @@ public class MainActivity extends AppCompatActivity {
                 switch (v.getId()) {
 
                     case R.id.btnGoods001:
-                        checkRecGoods ("1");
-                        renewTextReceipt();
+                        checkAddGoods("1");
+                        renewTextCheck();
                         break;
                     case R.id.btnGoods002:
-                        checkRecGoods ("2");
+                        checkAddGoods("2");
                         break;
                     case R.id.btnGoods003:
-                        checkRecGoods ("3");
+                        checkAddGoods("3");
                         break;
                     case R.id.btnGoods004:
-                        checkRecGoods ("4");
+                        checkAddGoods("4");
                         break;
                     case R.id.btnGoods005:
-                        checkRecGoods ("5");
+                        checkAddGoods("5");
                         break;
                     case R.id.btnGoods006:
-                        checkRecGoods ("6");
+                        checkAddGoods("6");
                         break;
                     case R.id.btnGoods007:
-                        checkRecGoods ("7");
+                        checkAddGoods("7");
                         break;
                     case R.id.btnGoods008:
-                        checkRecGoods ("8");
+                        checkAddGoods("8");
                         break;
                     case R.id.btnGoods009:
-                        checkRecGoods ("9");
+                        checkAddGoods("9");
                         break;
                     case R.id.btnGoods010:
-                        checkRecGoods ("10");
+                        checkAddGoods("10");
                         break;
                     case R.id.btnGoods011:
-                        checkRecGoods ("11");
+                        checkAddGoods("11");
                         break;
                     case R.id.btnGoods012:
-                        checkRecGoods ("12");
+                        checkAddGoods("12");
                         break;
                     case R.id.btnGoods013:
-                        checkRecGoods ("13");
+                        checkAddGoods("13");
                         break;
                     case R.id.btnGoods014:
-                        checkRecGoods ("14");
+                        checkAddGoods("14");
                         break;
                     case R.id.btnGoods015:
-                        checkRecGoods ("15");
+                        checkAddGoods("15");
                         break;
                     case R.id.btnGoods016:
-                        checkRecGoods ("16");
+                        checkAddGoods("16");
                         break;
                     case R.id.btnGoods017:
-                        checkRecGoods ("17");
+                        checkAddGoods("17");
                         break;
                     case R.id.btnGoods018:
-                        checkRecGoods ("18");
+                        checkAddGoods("18");
                         break;
                     case R.id.btnGoods019:
-                        checkRecGoods ("19");
+                        checkAddGoods("19");
                         break;
                     case R.id.btnGoods020:
-                        checkRecGoods ("20");
+                        checkAddGoods("20");
                         break;
                     case R.id.btnGoods021:
-                        checkRecGoods ("21");
+                        checkAddGoods("21");
                         break;
                     case R.id.btnGoods022:
-                        checkRecGoods ("22");
+                        checkAddGoods("22");
                         break;
                     case R.id.btnGoods023:
-                        checkRecGoods ("23");
+                        checkAddGoods("23");
                         break;
                     case R.id.btnGoods024:
-                        checkRecGoods ("24");
+                        checkAddGoods("24");
                         break;
                     case R.id.btnGoods025:
-                        checkRecGoods ("25");
+                        checkAddGoods("25");
                         break;
                     case R.id.btnGoods026:
-                        checkRecGoods ("26");
+                        checkAddGoods("26");
                         break;
                     case R.id.btnGoods027:
-                        checkRecGoods ("27");
+                        checkAddGoods("27");
                         break;
                     case R.id.btnGoods028:
-                        checkRecGoods ("28");
+                        checkAddGoods("28");
                         break;
                     case R.id.btnGoods029:
-                        checkRecGoods ("29");
+                        checkAddGoods("29");
                         break;
                     case R.id.btnGoods030:
-                        checkRecGoods ("30");
+                        checkAddGoods("30");
                         break;
                     case R.id.btnGoods031:
-                        checkRecGoods ("31");
+                        checkAddGoods("31");
                         break;
                     case R.id.btnGoods032:
-                        checkRecGoods ("32");
+                        checkAddGoods("32");
                         break;
                     case R.id.cancelBtn:
-                        textReceipt.setText("");
-                        receipt.clear();
+                        textCheck.setText("");
+                        check.clear();
                         break;
-                    case R.id.btnGoods035:
-                        Goods testGoods1 = new Goods();
-                        Goods testGoods2 = new Goods();
-                        Goods testGoods3 = new Goods();
-                        testGoods1.setTypeGoods("1");
-                        testGoods2.setTypeGoods("2");
-                        testGoods3.setTypeGoods("3");
-                        testGoods1.setQuantityGoods(3);
-                        testGoods2.setQuantityGoods(4);
-                        testGoods3.setQuantityGoods(5);
-                        receipt.add(testGoods1);
-                        receipt.add(testGoods2);
-                        receipt.add(testGoods3);
 
-                        break;
                     case R.id.saleBtn:
-                        sendServer();
-//                        renewTextReceipt ();
+                        sendServer(check);
+                        textCheck.setText("");
+
+//                        renewTextCheck ();
                         break;
 
 
                 }
- //               renewTextReceipt (); //вывод на экран чека
+               renewTextCheck(); //вывод на экран чека
             }
         };
 
@@ -277,63 +266,35 @@ public class MainActivity extends AppCompatActivity {
         btnGoods032.setOnClickListener(onClickListener);
         saleBtn.setOnClickListener(onClickListener);
         cancelBtn.setOnClickListener(onClickListener);
-        btnGoods035.setOnClickListener(onClickListener);
-        btnGoods034.setOnClickListener(onClickListener);
 
     }
 
     //добавление товара в чек
-    private void checkRecGoods(String i) {
-
-
-        currGoods = new Goods();
-        currGoods.setTypeGoods (i);
-        Boolean foundGoodsInReceipt = false;
-
-        //если receipt - создан (повторный выбор товара), проверяем наличие в чека такого же товара
-        if (!receipt.isEmpty()) {
-
-            //поиск в receipt аналогичного currGoods с typeGoods =i
-            for (int x = 0; x < (receipt.size());  x++) {
-
-                //если есть, то setIncreaseQuantityGoods и замена данной позиции receipt на currGoods
-                if (receipt.get(x).getTypeGoods().equals(currGoods.getTypeGoods()) ) {
-                    Goods compGoods = receipt.get(x);
-                    compGoods.setIncreaseQuantityGoods();
-                    receipt.set(x,compGoods);
-                    foundGoodsInReceipt = true;
-                    break;
-                }
-            }
-        }
-
-        //если receipt не пустой и не найдено совпадение то добавляем в конце
-        if (!foundGoodsInReceipt) {
-            receipt.add(currGoods);
-        }
+    private void checkAddGoods(String i) {
+        check.addGoods(i);
 
     }
 
 
     //метод вывода чека на экране, добавление итога (тип товара 0) - нужно сделать
-    public void renewTextReceipt() {
-        textReceipt.setText("");
+    public void renewTextCheck() {
+        textCheck.setText("");
         int strId;
-        for (int y = 0; y < receipt.size();  y++) {
+        for (int y = 0; y < check.getCheck().size(); y++) {
 
-            String idPos = "viewGoods" + receipt.get(y).getTypeGoods();//создаем id путем объеднения "viewGoods" и типа передаваемого этому методу товара
+            String idPos = "viewGoods" + check.getCheck().get(y).getTypeGoods();//создаем id путем объеднения "viewGoods" и типа передаваемого этому методу товара
 
             //вывод строки
             strId = getResources().getIdentifier(idPos, "string", getPackageName());
             String strValue = getString(strId);
-            textReceipt.append(strValue + "*" + receipt.get(y).getQuantityGoods() + "\t" + summGoods(receipt.get(y))  + "\n");
+            textCheck.append(strValue + "*" + check.getCheck().get(y).getQuantityGoods() + "\t" + summGoods(check.getCheck().get(y))  + "\n");
         }
-        textReceipt.append("---------------------------" + "\n");
+        textCheck.append("---------------------------" + "\n");
 
 
-        //нужно, чтобы не вычислять, в конце receipt добавить последним объектом объект с типом 0 - это будет общая цена чека
+        //нужно, чтобы не вычислять, в конце check добавить последним объектом объект с типом 0 - это будет общая цена чека
 
-        textReceipt.append("Итого: " + itogReceipt().setScale(2, BigDecimal.ROUND_HALF_UP) + "руб.");
+        textCheck.append("Итого: " + itogCheck() + "руб.");
     }
 
 
@@ -346,43 +307,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //итог чека       -      нужно этот метод включить при отправке на сервер, для добавления общей цены чека в receipt
-    public BigDecimal itogReceipt (){
+    //итог чека       -      нужно этот метод включить при отправке на сервер, для добавления общей цены чека в check
+    public BigDecimal itogCheck(){
         double x = 0;
-        BigDecimal receiptItog;
-        for (int z = 0; z < receipt.size();  z++) {
-            x = x + summGoods(receipt.get(z)).doubleValue();
+        BigDecimal checkItog;
+        for (int z = 0; z < check.getCheck().size(); z++) {
+            x = x + summGoods(check.getCheck().get(z)).doubleValue();
         }
-        receiptItog = new BigDecimal(x);
-//        receiptItog.setScale(2, BigDecimal.ROUND_HALF_UP); //задаем округление до 2 знаков
-        return receiptItog;
+        checkItog = new BigDecimal(x);
+        checkItog = checkItog.setScale(2, BigDecimal.ROUND_HALF_UP); //задаем округление до 2 знаков
+        return checkItog;
     }
 
+
     //отправка чека на сервер
-    public void sendServer() {
-        Goods recItog = new Goods();
-        recItog.setTypeGoods(String.valueOf(0));
-        recItog.setSumm(itogReceipt ());
-       try {
-           textReceipt.append("попытка создать сокет \n");
-           Socket sock = new Socket("127.0.0.1", 5000);
-           textReceipt.append("попытка создать поток низкого уровня \n");
-           OutputStreamWriter streamWriter = new OutputStreamWriter(sock.getOutputStream());
-           textReceipt.append("попытка создать цепной поток отправки \n");
-           PrintWriter writer = new PrintWriter(streamWriter);
-           textReceipt.append("попытка отправки на сервер \n");
-           for (int x = 0; x < receipt.size(); x++) {
+    public void sendServer(Check check) {
+//        int cenaKopeks = 400;
+//        Goods checkItogServer = new Goods();
+//        checkItogServer.setTypeGoods(String.valueOf(0));
+//        checkItogServer.setSumm(new BigDecimal(cenaKopeks));
 
-               writer.println(receipt.get(x).getTypeGoods() + "\\" + receipt.get(x).getQuantityGoods() + "\\" + receipt.get(x).getSumm().toString());
 
-           }
-           writer.close();
-           textReceipt.append("закрытие цепного потока отправки \n");
-       } catch (Exception exception) {exception.printStackTrace();}
-  //      textReceipt.append("очистка чека \n");
- //       textReceipt.setText("");
-        //receipt.clear();
-       //renewTextReceipt();
+//      добавление итока в чек в копейках, нужно добавить номер транзакции - рассчет ее
+//        check.add (checkItogServer);
+        sendClass = new SendClass();
+
+
+
+/*        try {
+            Check checkSend = check.clone();
+            sendClass.execute(checkSend);
+            TimeUnit.SECONDS.sleep(1);
+            check.clear();
+        }
+            catch(CloneNotSupportedException | InterruptedException ex){
+                System.out.println("Clonable not implemented");
+            }*/
+
+        try {
+            sendClass.execute(check);
+            TimeUnit.SECONDS.sleep(1);
+            check.clear();
+        }
+            catch(InterruptedException ex){
+                System.out.println("Interrupt not supported");
+            }
+
+
+
+
+  //      очистка чека в методе case
+
     }
 
 
