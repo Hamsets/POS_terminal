@@ -1,14 +1,13 @@
 package com;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.pm.ActivityInfo;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pos_ver_01.R;
 
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     SendClass sendClass;
-    public static final String hostServer = "192.168.1.207";
+    public static final String hostServer = "192.168.1.200";
     public static final int portServer = 51100;
     TextView textCheck;
     Button saleBtn;
