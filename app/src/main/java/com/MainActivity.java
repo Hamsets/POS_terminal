@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity {
     SendClass sendClass;
     public static final String hostServer = "192.168.1.200";
+
     public static final int portServer = 51100;
     TextView textCheck;
     Button saleBtn;
