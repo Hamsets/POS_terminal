@@ -1,25 +1,18 @@
-package com;
+package pos.Dto;
 
 import java.util.ArrayList;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Check implements Cloneable{
-    private ArrayList<Goods> check;
-
-    public Check(){
-        this.check = new ArrayList<Goods>();
-    }
-
-    public Check(ArrayList<Goods> check) {
-        this.check = check;
-    }
-
-    public ArrayList<Goods> getCheck() {
-        return check;
-    }
-
-    public void setCheck(ArrayList<Goods> check) {
-        this.check = check;
-    }
+    private ArrayList<Goods> check = new ArrayList<>();
 
     public Boolean isEmpty (){
         if (check.isEmpty()) {
@@ -32,9 +25,6 @@ public class Check implements Cloneable{
     public void clear(){
         check.clear();
     }
-
-
-
 
     public void addGoods(String i) {
 
@@ -63,14 +53,9 @@ public class Check implements Cloneable{
         if (!foundGoodsInCheck) {
             check.add(currGoods);
         }
-
     }
 
     public Check clone() throws CloneNotSupportedException{
         return (Check) super.clone();
     }
-
-
-
-
 }

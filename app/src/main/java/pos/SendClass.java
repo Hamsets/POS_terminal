@@ -1,4 +1,4 @@
-package com;
+package pos;
 
 // import static com.MainActivity.hostServer;
 //import static com.MainActivity.portServer;
@@ -9,7 +9,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.concurrent.TimeUnit;
+
+import pos.Dto.Check;
 
 class SendClass extends AsyncTask<Check, Void, Void> {
 

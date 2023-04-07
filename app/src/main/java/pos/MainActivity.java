@@ -1,4 +1,4 @@
-package com;
+package pos;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -13,6 +13,9 @@ import com.example.pos_ver_01.R;
 
 import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
+
+import pos.Dto.Check;
+import pos.Dto.Goods;
 
 public class MainActivity extends AppCompatActivity {
     SendClass sendClass;
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnGoods034;
     ImageButton btnGoods035;
     Goods currGoods;
-    Check check = new Check();
+    public Check check = new Check();
     int [] prices = {80,100,100,450,500,400,500,100,400,230,310,400,280,330,330,400,310,380,230,280,140,450,350,400,150,450,100,100,300,1600,3200,100};
 
 
