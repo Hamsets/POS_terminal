@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="pos.ui.settings.SettingsActivity">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="20sp"
+                    android:text="Настройки">
+                </TextView>
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|right"
+                android:textSize="20sp"
+                android:text="IP адрес сервера">
+
+            </TextView>
+
+        </LinearLayout>
+
+            <EditText
+                android:id="@+id/settingsServIPEdit"
+                android:layout_width="257dp"
+                android:layout_height="match_parent"
+                android:hint="введите IP адрес"
+                android:inputType="text|number"
+                android:textSize="20sp">
+
+            </EditText>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|right"
+                    android:textSize="20sp"
+                    android:text="Порт сервера:">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/settingsServPortEdit"
+                android:layout_width="257dp"
+                android:layout_height="match_parent"
+                android:hint="введите порт сервера"
+                android:inputType="text|number"
+                android:textSize="20sp">
+
+            </EditText>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|right"
+
+                    android:textSize="20sp"
+                    android:text="Код точки:">
+
+                </TextView>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/settingsServPosEdit"
+                android:layout_width="257dp"
+                android:layout_height="match_parent"
+                android:hint="введите код точки"
+                android:textSize="20sp">
+
+            </EditText>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/settingsSaveBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cохранить">
+
+                </Button>
+
+            </LinearLayout>
+
+        </TableRow>
+        <TableRow>
+            <Button
+                android:id="@+id/settingsCloseBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Закрыть">
+
+            </Button>
+        </TableRow>
+    </TableLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
