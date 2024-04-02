@@ -1,6 +1,7 @@
 package pos.Dto;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -11,13 +12,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckDto implements Cloneable{
+public class CheckDto{
+    private static final String TAG = "logsCheckDto";
     private Long id;
     private String pos;
     private Long cashierId;
     private ArrayList<GoodsDto> goodsDtoList = new ArrayList<>();
     private BigDecimal sum = new BigDecimal(0);
-    private String dateStamp;
+    private Timestamp dateStamp;
     private Boolean deleted;
 
     public Boolean isEmpty (){
@@ -36,7 +38,7 @@ public class CheckDto implements Cloneable{
 
         GoodsDto currGoodsDto = new GoodsDto();
         currGoodsDto.setGoodsType(i);
-        Boolean foundGoodsInCheck = false;
+        boolean foundGoodsInCheck = false;
 
         //если check - создан (повторный выбор товара), проверяем наличие в чека такого же товара
         if (!goodsDtoList.isEmpty()) {
@@ -61,9 +63,9 @@ public class CheckDto implements Cloneable{
         }
     }
 
-    public CheckDto clone() throws CloneNotSupportedException{
-        return (CheckDto) super.clone();
-    }
+//    public CheckDto clone() throws CloneNotSupportedException{
+//        return (CheckDto) super.clone();
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -79,6 +81,9 @@ public class CheckDto implements Cloneable{
 
     @Override
     public int hashCode() {
-        return Objects.hash(pos, cashierId, goodsDtoList, sum, dateStamp, deleted);
+        int hash;
+        String str = pos + cashierId.toString() + sum.toString() + dateStamp.toString() + deleted.toString();
+        hash = Objects.hash(str);
+        return hash;
     }
 }

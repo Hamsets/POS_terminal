@@ -11,4 +11,5 @@ public class ConnectionSettingsObj {
     private String urlServer;
     private int portServer;
     private static final String TAG = "logsConnectionSettingsObj";
+
 }

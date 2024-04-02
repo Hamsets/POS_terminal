@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import pos.Connection.ConnectionSettingsObj;
+import pos.Connection.ConnectionType;
 import pos.Connection.SendClass;
 import pos.Dto.CheckDto;
 import pos.Dto.GoodsDto;
@@ -77,10 +78,8 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnGoods033;
     ImageButton btnGoods034;
     ImageButton btnGoods035;
-    GoodsDto currGoodsDto;
-    //FIXME //hardcoded some fields
 
-    private SendClass sendClass;
+    //FIXME //hardcoded some fields
 
     private final int [] prices = {80,100,100,450,500,400,500,100,400,230,310,400,280,330,330,400,
             310,380,230,280,140,450,350,400,150,450,100,100,300,1600,3200,100};
@@ -94,15 +93,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        settings = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
+        settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
 
-        urlServer = settings.getString(PREF_URL_SERVER,"");
+        urlServer = settings.getString(getString(R.string.urlServer),"");
         Log.d(TAG, "Получен IP адрес: " + urlServer);
 
-        portServer = settings.getInt(PREF_PORT_SERVER, 0);
+        portServer = settings.getInt(getString(R.string.portServer), 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
 
-        posName = settings.getString(PREF_POS_NAME, "");
+        posName = settings.getString(getString(R.string.posName), "");
         Log.d(TAG, "Получено название кассы: " + posName);
 
 
@@ -338,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        menu.findItem(R.id.action_close).setTitle("Закрыть смену");
         return true;
     }
 
@@ -350,6 +350,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
             return true;
+            case R.id.action_close:
+                super.finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -357,32 +360,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private void saleBtnClick() { //FIXME saleBtn.setEnabled(false) and cancelBtn.setEnabled(false)
+    private void saleBtnClick() {
         String result="";
         if (!checkDto.isEmpty()){
+            saleBtn.setEnabled(false);
+            cancelBtn.setEnabled(false);
+
             checkDto.setCashierId(ID_CASHIER);
             checkDto.setPos(posName);
             checkDto.setDeleted(false);
 
-//            saleBtn.setEnabled(false);
-//            cancelBtn.setEnabled(false);
-//            textCheck.setText(emptyArrayChar,0,0);
 
-//            Thread senderThread = new Thread(new SendClass());
-//            senderThread.start();
-
-//            sendClass.setStrForWrite(prepareSendStr());
-            sendClass =  new SendClass();
-            sendClass.execute(prepareSendObj());
+            SendClass sendClass =  new SendClass();
+            ConnectionSettingsObj connectionSettingsObj=prepareSendObj();
+            sendClass.execute(connectionSettingsObj);
             if (sendClass==null) return;
             try {
                 Log.d(TAG, "Попытка получения ответа сервера.");
                 result=sendClass.get();
                 if (!result.equals("")) {
                     textCheck.append("\n"+ "Результат отправки на сервер: "
-                            + String.valueOf(result==Integer.toString(checkDto.hashCode()))
+                            + result.equals(String.valueOf(checkDto.hashCode()))
                             + "\n");
-                    Log.d (TAG, "Отправляемые данные: " + prepareSendObj().getStrMessage());//FIXME разное время чека в отправке и результате
+                    Log.d (TAG, "Отправляемые данные: " + connectionSettingsObj.getStrMessage());
                 }
             } catch (InterruptedException e){
                 e.printStackTrace();
@@ -390,21 +390,24 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-
+            if (result.equals(String.valueOf(checkDto.hashCode()))){
 //            sendClass.downService();
-
+                checkDto.clear();
+                textCheck.setText("Занесено в БД!");
+            }
+            saleBtn.setEnabled(true);
+            cancelBtn.setEnabled(true);
         }
     }
 
     public ConnectionSettingsObj prepareSendObj(){
+
         ConnectionSettingsObj connectionSettingsObj;
         Date currDate = new Date();
         Timestamp timestamp = new Timestamp(currDate.getTime());
-        checkDto.setDateStamp(timestamp.toString());
-        Log.d(TAG, "Результат работы checkDto.setDateStamp: " + checkDto.getDateStamp());
-
-        String strFullCheck = "writeCheck#" + checkDto.getId().toString() + "#" + checkDto.getPos() + "#" +
-                checkDto.getCashierId().toString() + "#";
+        checkDto.setDateStamp(timestamp);
+        String strFullCheck = ConnectionType.WRITE_CHECK +  "#" + checkDto.getId().toString() + "#"
+                + checkDto.getPos() + "#" + checkDto.getCashierId().toString() + "#";
 
                 //          цикл для сбора всех чеков
         for (int x = 0; x < checkDto.getGoodsDtoList().size(); x++) {
@@ -415,10 +418,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         strFullCheck = strFullCheck + "#" + checkDto.getSum() + "#"
-                + checkDto.getDateStamp().toString() + "#"
+                + checkDto.getDateStamp() + "#"
                 + checkDto.getDeleted().toString();
-        Log.d(TAG,"Время перед созданием объекта-обертки со строкой данных " +
-                "и настройками соединения - " + checkDto.getDateStamp().toString());
         connectionSettingsObj = new ConnectionSettingsObj(strFullCheck,urlServer,portServer);
 
         return connectionSettingsObj;

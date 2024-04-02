@@ -24,6 +24,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String posName;
     Button saveBtn;
     Button closeBtn;
+    Button settingsMainCloseBtn;
     EditText ipEditText;
     EditText portEditText;
     EditText posEditText;
@@ -65,11 +66,17 @@ public class SettingsActivity extends AppCompatActivity {
                     case R.id.settingsCloseBtn:
                         canselSettingsBtnClick();
                         break;
+
                 }
             }
         };
         saveBtn.setOnClickListener(onClickListener);
         closeBtn.setOnClickListener(onClickListener);
+    }
+
+    private void mainSettingsBtnClick(){
+//        super.finish();
+//        super.finish();
     }
 
     private void canselSettingsBtnClick() {

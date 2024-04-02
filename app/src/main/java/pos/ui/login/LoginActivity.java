@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.pos_ver_01.R;
 import com.example.pos_ver_01.databinding.ActivityLoginBinding;
 
+import pos.ui.main.MainActivity;
 import pos.ui.settings.SettingsActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,9 +37,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private SharedPreferences settings;
-    private static final String PREFS_FILE = "Properties";
-    private static final String PREF_URL_SERVER = "urlServer";
-    private static final String PREF_PORT_SERVER = "portServer";
+//    private static final String PREFS_FILE = "Properties";
+//    private static final String PREF_URL_SERVER = "urlServer";
+//    private static final String PREF_PORT_SERVER = "portServer";
     private static final String PREF_POS_NAME = "posName";
     private String urlServer;
     private int portServer;
@@ -60,12 +61,12 @@ public class LoginActivity extends AppCompatActivity {
         final ProgressBar loadingProgressBar = binding.loading;
 
 
-        settings = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
+        settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
 
-        urlServer = settings.getString(PREF_URL_SERVER,"");
+        urlServer = settings.getString(getString(R.string.urlServer),"");
         Log.d(TAG, "Получен IP адрес: " + urlServer);
 
-        portServer = settings.getInt(PREF_PORT_SERVER, 0);
+        portServer = settings.getInt(getString(R.string.portServer), 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
 
         posName = settings.getString(PREF_POS_NAME, "");
@@ -151,6 +152,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
@@ -162,6 +165,7 @@ public class LoginActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        menu.findItem(R.id.action_close).setTitle("Выход");
         return true;
     }
 
@@ -173,6 +177,9 @@ public class LoginActivity extends AppCompatActivity {
             case R.id.action_settings :
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
+                return true;
+            case R.id.action_close:
+                super.finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
