@@ -9,9 +9,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.pos_ver_01.R;
 
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import pos.Connection.ConnectionSettingsObj;
@@ -41,7 +38,7 @@ public class LoginViewModel extends ViewModel {
         return loginResult;
     }
 
-    public void login(String username, String password) {
+    public void login(String username, String password, String urlServer, int portServer) {
         //TODO can be launched in a separate asynchronous job
 
 
@@ -55,8 +52,11 @@ public class LoginViewModel extends ViewModel {
             Log.d(TAG, "Попытка получения ответа сервера.");
             answer=sendClass.get();
             if (!answer.equals("")) {
+                boolean isHasId = Integer.parseInt(answer) == 0;
                 Log.d(TAG,"Результат отправки на сервер: "
-                        + answer.equals(String.valueOf(Objects.hash(username + password))));
+
+                        + isHasId);
+
                 Log.d (TAG, "Отправляемые данные: " + connectionSettingsObj.getStrMessage());
             }
         } catch (InterruptedException e){
@@ -65,7 +65,9 @@ public class LoginViewModel extends ViewModel {
             e.printStackTrace();
         }
 
-        if (answer.equals(String.valueOf(Objects.hash(username+password)))){
+
+//        (answer.equals(String.valueOf(Objects.hash(username+password))))
+        if (!answer.equals(0)){
             Log.d(TAG,"Логин принят");
         } else {
             Log.d(TAG,"Логин отвергнут!");
@@ -84,10 +86,6 @@ public class LoginViewModel extends ViewModel {
         }
     }
 
-
-
-
-
     public ConnectionSettingsObj prepareSendObj(String username, String password, String urlServer,
                                                 int portServer){
         ConnectionSettingsObj connectionSettingsObj;
@@ -95,14 +93,6 @@ public class LoginViewModel extends ViewModel {
         connectionSettingsObj = new ConnectionSettingsObj(str,urlServer,portServer);
         return connectionSettingsObj;
     }
-
-
-
-
-
-
-
-
 
     public void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {
@@ -128,6 +118,6 @@ public class LoginViewModel extends ViewModel {
 
     // A placeholder password validation check
     private boolean isPasswordValid(String password) {
-        return password != null && password.trim().length() > 5;
+        return password != null && password.trim().length() > 2;//FIXME потом увеличить количество символов пароля до минимум 4
     }
 }

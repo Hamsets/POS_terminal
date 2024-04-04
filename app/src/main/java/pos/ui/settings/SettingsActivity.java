@@ -40,13 +40,19 @@ public class SettingsActivity extends AppCompatActivity {
         portEditText = (EditText) findViewById(R.id.settingsServPortEdit);
         posEditText = (EditText) findViewById(R.id.settingsServPosEdit);
 
-        settings = getSharedPreferences(PREFS_FILE, MODE_PRIVATE);
+        settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
 
-        urlServer = settings.getString(PREF_URL_SERVER,"");
+        urlServer = settings.getString(getString(R.string.urlServer),"");
         Log.d(TAG, "Получен IP адрес: " + urlServer);
 
-        portServer = settings.getInt(PREF_PORT_SERVER, 0);
+        portServer = settings.getInt(getString(R.string.portServer), 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
+
+//        urlServer = settings.getString(PREF_URL_SERVER,"");
+//        Log.d(TAG, "Получен IP адрес: " + urlServer);
+//
+//        portServer = settings.getInt(PREF_PORT_SERVER, 0);
+//        Log.d(TAG, "Получен номер порта: " + portServer);
 
         posName = settings.getString(PREF_POS_NAME, "");
         Log.d(TAG, "Получено название кассы: " + posName);

@@ -63,10 +63,10 @@ public class LoginActivity extends AppCompatActivity {
 
         settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
 
-        urlServer = settings.getString(getString(R.string.urlServer),"");
+        urlServer = settings.getString("urlServer","");
         Log.d(TAG, "Получен IP адрес: " + urlServer);
 
-        portServer = settings.getInt(getString(R.string.portServer), 0);
+        portServer = settings.getInt("portServer", 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
 
         posName = settings.getString(PREF_POS_NAME, "");
@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
+                            passwordEditText.getText().toString(), urlServer, portServer);
                 }
                 return false;
             }
@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 loadingProgressBar.setVisibility(View.VISIBLE);
                 loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                        passwordEditText.getText().toString(), urlServer, portServer);
             }
         });
     }
