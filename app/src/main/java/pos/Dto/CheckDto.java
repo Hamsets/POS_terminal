@@ -16,7 +16,7 @@ public class CheckDto{
     private static final String TAG = "logsCheckDto";
     private Long id;
     private String pos;
-    private Long cashierId;
+    private int cashierId;
     private ArrayList<GoodsDto> goodsDtoList = new ArrayList<>();
     private BigDecimal sum = new BigDecimal(0);
     private Timestamp dateStamp;
@@ -73,7 +73,7 @@ public class CheckDto{
         if (o == null || getClass() != o.getClass()) return false;
         CheckDto checkDto = (CheckDto) o;
         return id.equals(checkDto.id) && pos.equals(checkDto.pos) &&
-                cashierId.equals(checkDto.cashierId) &&
+                cashierId == checkDto.cashierId &&
                 goodsDtoList.equals(checkDto.goodsDtoList) &&
                 sum.equals(checkDto.sum) && dateStamp.equals(checkDto.dateStamp) &&
                 deleted.equals(checkDto.deleted);
@@ -82,7 +82,7 @@ public class CheckDto{
     @Override
     public int hashCode() {
         int hash;
-        String str = pos + cashierId.toString() + sum.toString() + dateStamp.toString() + deleted.toString();
+        String str = pos + cashierId + sum.toString() + dateStamp.toString() + deleted.toString();
         hash = Objects.hash(str);
         return hash;
     }

@@ -37,9 +37,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private SharedPreferences settings;
-//    private static final String PREFS_FILE = "Properties";
-//    private static final String PREF_URL_SERVER = "urlServer";
-//    private static final String PREF_PORT_SERVER = "portServer";
     private static final String PREF_POS_NAME = "posName";
     private String urlServer;
     private int portServer;
@@ -153,6 +150,13 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser(LoggedInUserView model) {
         String welcome = getString(R.string.welcome) + model.getDisplayName();
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("id", model.getId());
+        intent.putExtra("role", model.getRole().toString());
+        intent.putExtra("urlServer", model.getUrlServer());
+        intent.putExtra("portServer", model.getPortServer());
+        intent.putExtra("posName", posName);
+        intent.putExtra("startActivity", "LoginActivity");
+
         startActivity(intent);
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();

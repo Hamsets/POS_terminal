@@ -10,8 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 @Getter
-public class UsersDto {
-    private Long id;
+public class UsersDto{
+    private int id;
     private String firstName;
     private String lastName;
     private String surName;
@@ -26,7 +26,7 @@ public class UsersDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UsersDto usersDto = (UsersDto) o;
-        return id.equals(usersDto.id)
+        return id == usersDto.id
                 && firstName.equals(usersDto.firstName)
                 && lastName.equals(usersDto.lastName)
                 && surName.equals(usersDto.surName)

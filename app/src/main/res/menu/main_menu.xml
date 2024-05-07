@@ -5,7 +5,11 @@
         android:orderInCategory="1"
         android:title="Настройки" />
     <item
-        android:id="@+id/action_close"
+        android:id="@+id/action_itog"
         android:orderInCategory="2"
+        android:title="Дневная выручка" />
+    <item
+        android:id="@+id/action_close"
+        android:orderInCategory="3"
         android:title="Закрыть смену" />
 </menu>

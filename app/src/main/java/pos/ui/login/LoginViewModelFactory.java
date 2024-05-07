@@ -8,6 +8,9 @@ import pos.data.LoginDataSource;
 import pos.data.LoginRepository;
 
 /**
+ * Фабрика поставщика ViewModel для создания экземпляра LoginViewModel.
+ * Требуется, если LoginViewModel имеет непустой конструктор.
+ *
  * ViewModel provider factory to instantiate LoginViewModel.
  * Required given LoginViewModel has a non-empty constructor
  */

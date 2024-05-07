@@ -59,7 +59,7 @@
     <string name="action_sign_in_short">Войти</string>
     <string name="welcome">"Приветствую !"</string>
     <string name="invalid_username">Не верное имя пользователя</string>
-    <string name="invalid_password">Пароль должен иметь мин. 5 символов</string>
+    <string name="invalid_password">Пароль должен иметь мин. 4 символа</string>
     <string name="login_failed">"Вход не выполнен"</string>
     <string name="portServer">portServer</string>
     <string name="posName">posName</string>

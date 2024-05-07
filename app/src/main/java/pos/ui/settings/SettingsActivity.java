@@ -11,20 +11,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pos_ver_01.R;
 
+import pos.Dto.Role;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = "logsSettingsActivity";
     private SharedPreferences settings;
-    private static final String PREFS_FILE = "Properties";
     private static final String PREF_URL_SERVER = "urlServer";
     private static final String PREF_PORT_SERVER = "portServer";
     private static final String PREF_POS_NAME = "posName";
     private String urlServer;
     private int portServer;
     private String posName;
+    private Role userRole;
     Button saveBtn;
     Button closeBtn;
-    Button settingsMainCloseBtn;
     EditText ipEditText;
     EditText portEditText;
     EditText posEditText;
@@ -40,6 +41,39 @@ public class SettingsActivity extends AppCompatActivity {
         portEditText = (EditText) findViewById(R.id.settingsServPortEdit);
         posEditText = (EditText) findViewById(R.id.settingsServPosEdit);
 
+        try {
+            if (getIntent().getStringExtra("startActivity").equals("MainActivity")) {
+                userRole = Role.valueOf(getIntent().getStringExtra("role"));
+                 if (userRole.equals(Role.ADMIN) || userRole.equals((Role.MANAGER))) {
+                    ipEditText.setFocusable(true);
+                    ipEditText.setLongClickable(true);
+                    ipEditText.setCursorVisible(true);
+
+                    portEditText.setFocusable(true);
+                    portEditText.setLongClickable(true);
+                    portEditText.setCursorVisible(true);
+
+                    posEditText.setFocusable(true);
+                    posEditText.setLongClickable(true);
+                    posEditText.setCursorVisible(true);
+                } else {
+                    ipEditText.setFocusable(false);
+                    ipEditText.setLongClickable(false);
+                    ipEditText.setCursorVisible(false);
+
+                    portEditText.setFocusable(false);
+                    portEditText.setLongClickable(false);
+                    portEditText.setCursorVisible(false);
+
+                    posEditText.setFocusable(false);
+                    posEditText.setLongClickable(false);
+                    posEditText.setCursorVisible(false);
+                }
+            }
+
+        } catch (NullPointerException e) {
+            Log.d(TAG, "Меню запущено из LoginActivity, поля ввода не управляются.");}
+
         settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
 
         urlServer = settings.getString(getString(R.string.urlServer),"");
@@ -47,12 +81,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         portServer = settings.getInt(getString(R.string.portServer), 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
-
-//        urlServer = settings.getString(PREF_URL_SERVER,"");
-//        Log.d(TAG, "Получен IP адрес: " + urlServer);
-//
-//        portServer = settings.getInt(PREF_PORT_SERVER, 0);
-//        Log.d(TAG, "Получен номер порта: " + portServer);
 
         posName = settings.getString(PREF_POS_NAME, "");
         Log.d(TAG, "Получено название кассы: " + posName);
@@ -70,9 +98,8 @@ public class SettingsActivity extends AppCompatActivity {
                         saveSettingsBtnClick();
                         break;
                     case R.id.settingsCloseBtn:
-                        canselSettingsBtnClick();
+                        closeSettingsBtnClick();
                         break;
-
                 }
             }
         };
@@ -80,35 +107,27 @@ public class SettingsActivity extends AppCompatActivity {
         closeBtn.setOnClickListener(onClickListener);
     }
 
-    private void mainSettingsBtnClick(){
-//        super.finish();
-//        super.finish();
-    }
-
-    private void canselSettingsBtnClick() {
+    private void closeSettingsBtnClick() {
 
         super.finish();
     }
 
     private void saveSettingsBtnClick() {
 
-        try {
-            String ip = String.valueOf(ipEditText.getText());
-            int port = Integer.parseInt(portEditText.getText().toString());
-            String pos = String.valueOf(posEditText.getText());
+        urlServer = String.valueOf(ipEditText.getText());
+        portServer = Integer.parseInt(portEditText.getText().toString());
+        posName = String.valueOf(posEditText.getText());
 
-            if (!ip.isEmpty() & isIP(ip)) {
-                SharedPreferences.Editor prefEditor = settings.edit();
-                prefEditor.putString(PREF_URL_SERVER, ip);
-                prefEditor.putInt(PREF_PORT_SERVER, port);
-                prefEditor.putString(PREF_POS_NAME, pos);
-                prefEditor.apply();
-                Log.d(TAG,"Внесен новый адрес сервера: " + ip);
-                Log.d(TAG,"Внесен новый порт сервера: " + port);
-                Log.d(TAG,"Внесен новый идентификатор точки продаж: " + pos);
-            }
-        } catch (Exception e){
-            Log.d(TAG,"Ошибка: " + e);
+        if (!urlServer.isEmpty() && isIP(urlServer)) {
+
+            SharedPreferences.Editor prefEditor = settings.edit();
+            prefEditor.putString(PREF_URL_SERVER, urlServer);
+            prefEditor.putInt(PREF_PORT_SERVER, portServer);
+            prefEditor.putString(PREF_POS_NAME, posName);
+            prefEditor.apply();
+            Log.d(TAG,"Внесен новый адрес сервера: " + urlServer);
+            Log.d(TAG,"Внесен новый порт сервера: " + portServer);
+            Log.d(TAG,"Внесен новый идентификатор точки продаж: " + posName);
         }
     }
 

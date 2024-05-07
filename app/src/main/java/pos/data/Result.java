@@ -1,6 +1,7 @@
 package pos.data;
 
 /**
+ * Дженерик класс который содержит результат с данными или исключение об ошибке
  * A generic class that holds a result success w/ data or an error exception.
  */
 public class Result<T> {

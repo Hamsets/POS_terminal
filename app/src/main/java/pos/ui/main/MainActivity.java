@@ -27,19 +27,20 @@ import pos.Connection.ConnectionType;
 import pos.Connection.SendClass;
 import pos.Dto.CheckDto;
 import pos.Dto.GoodsDto;
+import pos.Dto.Role;
+import pos.ui.itog.ItogActivity;
+import pos.ui.login.LoginActivity;
 import pos.ui.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "logsMainActivity";
-    private static final String PREFS_FILE = "Properties";
-    private static final String PREF_URL_SERVER = "urlServer";
-    private static final String PREF_PORT_SERVER = "portServer";
-    private static final String PREF_POS_NAME = "posName";
+    private String startActivity;
     private String urlServer;
     private int portServer;
     private String posName;
     SharedPreferences settings;
-    private static final long ID_CASHIER = 1l; //FIXME //must be inserted by UI
+    private int userId;
+    private Role userRole;
     TextView textCheck;
     Button saleBtn;
     Button cancelBtn;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final int [] prices = {80,100,100,450,500,400,500,100,400,230,310,400,280,330,330,400,
             310,380,230,280,140,450,350,400,150,450,100,100,300,1600,3200,100};
-    private CheckDto checkDto = new CheckDto(0L, posName, ID_CASHIER,
+    private CheckDto checkDto = new CheckDto(0L, posName, userId,
                 new ArrayList<>(),null,null,false);
 
 
@@ -93,16 +94,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        userId = getIntent().getIntExtra("id",0);
+        userRole = Role.valueOf(getIntent().getStringExtra("role"));
         settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
+        urlServer = getIntent().getStringExtra("urlServer");
+        portServer = getIntent().getIntExtra("portServer", 0);
+        posName = getIntent().getStringExtra("posName");
+        startActivity = getIntent().getStringExtra("startActivity");
 
-        urlServer = settings.getString(getString(R.string.urlServer),"");
+
         Log.d(TAG, "Получен IP адрес: " + urlServer);
-
-        portServer = settings.getInt(getString(R.string.portServer), 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
-
-        posName = settings.getString(getString(R.string.posName), "");
         Log.d(TAG, "Получено название кассы: " + posName);
+        Log.d(TAG, "Текущее activity запущено от: " + startActivity);
 
 
         //запустим приложение в горизонтальном ориентировании
@@ -283,16 +287,12 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.saleBtn:
                         saleBtnClick();
-//                        textCheck.setText("");
-//                        checkDto.clear();
                         break;
                     case R.id.cancelBtn:
                         textCheck.setText("");
                         checkDto.clear();
                         break;
                 }
-
-//               renewTextCheck(checkDto); //вывод на экран чека
             }
         };
 
@@ -337,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        menu.findItem(R.id.action_itog).setTitle("Дневная выручка");
         menu.findItem(R.id.action_close).setTitle("Закрыть смену");
         return true;
     }
@@ -348,16 +349,50 @@ public class MainActivity extends AppCompatActivity {
         switch(id){
             case R.id.action_settings :
                 Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity = "MainActivity";
+                intent.putExtra("startActivity",startActivity);
+                intent.putExtra("role",userRole.toString());
                 startActivity(intent);
             return true;
+            case R.id.action_itog:
+                Intent intentItog = new Intent(this, ItogActivity.class);
+                intentItog.putExtra("itogDay",getDayItog());
+                startActivity (intentItog);
+                return true;
             case R.id.action_close:
                 super.finish();
+                Intent intentClose = new Intent(this, LoginActivity.class);
+                startActivity(intentClose);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private String getDayItog() {//TODO добавить в метод, в том числе через параметр этого метода, проверку чеков по дате (любой)
+        String result="";
+        ConnectionSettingsObj connectionSettingsObj = prepareSendObjItog();
+        SendClass sendClass = new SendClass();
+        sendClass.execute(connectionSettingsObj);
+        try {
+            Log.d(TAG, "Попытка получения ответа сервера.");
+            result=sendClass.get();
+            if (!result.equals("")) {
+                Log.d (TAG, "Отправляемые данные: " + connectionSettingsObj.getStrMessage());
+            }
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
+    private ConnectionSettingsObj prepareSendObjItog() {
+        ConnectionSettingsObj connectionSettingsObj;
+        String strFullCheck = ConnectionType.READ_DAY_ITOG.toString();
+        connectionSettingsObj = new ConnectionSettingsObj(strFullCheck,urlServer,portServer);
+        return connectionSettingsObj;
+    }
 
 
     private void saleBtnClick() {
@@ -366,13 +401,13 @@ public class MainActivity extends AppCompatActivity {
             saleBtn.setEnabled(false);
             cancelBtn.setEnabled(false);
 
-            checkDto.setCashierId(ID_CASHIER);
+            checkDto.setCashierId(userId);
             checkDto.setPos(posName);
             checkDto.setDeleted(false);
 
 
+            ConnectionSettingsObj connectionSettingsObj= prepareSendObjCheck();
             SendClass sendClass =  new SendClass();
-            ConnectionSettingsObj connectionSettingsObj=prepareSendObj();
             sendClass.execute(connectionSettingsObj);
             if (sendClass==null) return;
             try {
@@ -400,14 +435,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public ConnectionSettingsObj prepareSendObj(){
+    public ConnectionSettingsObj prepareSendObjCheck(){
 
         ConnectionSettingsObj connectionSettingsObj;
         Date currDate = new Date();
         Timestamp timestamp = new Timestamp(currDate.getTime());
         checkDto.setDateStamp(timestamp);
         String strFullCheck = ConnectionType.WRITE_CHECK +  "#" + checkDto.getId().toString() + "#"
-                + checkDto.getPos() + "#" + checkDto.getCashierId().toString() + "#";
+                + checkDto.getPos() + "#" + checkDto.getCashierId() + "#";
 
                 //          цикл для сбора всех чеков
         for (int x = 0; x < checkDto.getGoodsDtoList().size(); x++) {
@@ -423,11 +458,6 @@ public class MainActivity extends AppCompatActivity {
         connectionSettingsObj = new ConnectionSettingsObj(strFullCheck,urlServer,portServer);
 
         return connectionSettingsObj;
-
-//                    cancelBtn.setEnabled(true);
-//                    saleBtn.setEnabled(true);
-//                    textCheck.setText("");
-//                    renewTextCheck(checkDto);
     }
 
     //добавление товара в чек
@@ -454,7 +484,6 @@ public class MainActivity extends AppCompatActivity {
             textCheck.append("---------------------------" + "\n");
             textCheck.append("Итого: " + itogCheck(checkDto) + "руб.");
         }
-//        else {textCheck.setText("");}
     }
 
     //сумма одтотипных товаров в строке чека
@@ -478,6 +507,11 @@ public class MainActivity extends AppCompatActivity {
         return checkItog;
     }
 
+    @Override
+    protected void onStop() {
+        Log.d(TAG,"Закрытие окна КАССЫ");
+        super.onStop();
+    }
 
     private boolean isHasHash(String inputStr) {
         boolean accepted = false;

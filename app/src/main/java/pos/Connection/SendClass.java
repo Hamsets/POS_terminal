@@ -47,6 +47,7 @@ public class SendClass extends AsyncTask <ConnectionSettingsObj,Void, String>{
                         out.write(strMessage + "\n"); // отправляем на сервер
                         out.flush(); // чистим
                         strServAswer = in.readLine(); //получаем ответ от сервера
+//                        SendClass.this.downService();
 
                     } catch (IOException e) {
                         // Сокет должен быть закрыт при любой
@@ -66,10 +67,10 @@ public class SendClass extends AsyncTask <ConnectionSettingsObj,Void, String>{
     }
 
     @Override
-    protected void onPostExecute (String strServAbswer){
-        super.onPostExecute(strServAbswer);
-        Log.d(TAG,"Получен ответ от сервера: " + strServAbswer);
-
+    protected void onPostExecute (String strServAnswer){
+        super.onPostExecute(strServAnswer);
+        Log.d(TAG,"Получен ответ от сервера: " + strServAnswer);
+        SendClass.this.downService();
     }
 
     /**

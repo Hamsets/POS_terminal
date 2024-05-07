@@ -3,6 +3,8 @@ package pos.ui.login;
 import androidx.annotation.Nullable;
 
 /**
+ * Состояние проверки формы ввода
+ *
  * Data validation state of the login form.
  */
 class LoginFormState {

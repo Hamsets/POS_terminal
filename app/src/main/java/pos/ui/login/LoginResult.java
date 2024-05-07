@@ -3,6 +3,8 @@ package pos.ui.login;
 import androidx.annotation.Nullable;
 
 /**
+ * Результат авторизаации: успех (данные пользователя) или сообщение об ошибке
+ *
  * Authentication result : success (user details) or error message.
  */
 class LoginResult {
