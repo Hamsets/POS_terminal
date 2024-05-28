@@ -28,11 +28,12 @@
         <TableRow>
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/textView2"
-                    android:layout_width="match_parent"
+                    android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical|right"
                     android:text="Итого сегодня:"
@@ -40,11 +41,11 @@
 
                 </TextView>
 
-            </LinearLayout>
+
 
             <EditText
-                android:id="@+id/itogEdit"
-                android:layout_width="257dp"
+                android:id="@+id/itogCurrDayEdit"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false"
                 android:focusable="false"
@@ -53,18 +54,96 @@
                 android:textSize="20sp">
 
             </EditText>
+            </LinearLayout>
         </TableRow>
 
 
+        <TableRow>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/itogoOnDateText"
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|right"
+                    android:text="Итого на дату:"
+                    android:textSize="20sp">
+
+                </TextView>
+
+                <TextView
+                    android:id="@+id/startDateText"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|left"
+                    android:hint="c"
+                    android:textSize="20sp">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/dateDivText"
+                    android:layout_width="40dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="-"
+                    android:textSize="20sp">
+                </TextView>
+                <TextView
+                    android:id="@+id/endDateText"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|left"
+                    android:hint="по"
+                    android:textSize="20sp">
+                </TextView>
+
+            </LinearLayout>
+        </TableRow>
 
         <TableRow>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <Button
-                android:id="@+id/itogCloseBtn"
-                android:layout_width="wrap_content"
+                android:id="@+id/itogDateBtn"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Закрыть">
+                android:text="Подобрать">
 
             </Button>
+            <EditText
+                android:id="@+id/itogByDateEdit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:hint="По дате"
+                android:longClickable="false"
+                android:textSize="20sp">
+            </EditText>
+
+        </LinearLayout>
+
+        </TableRow>
+
+
+        <TableRow>
+            <LinearLayout
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/itogCloseBtn"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:text="Закрыть">
+
+                </Button>
+            </LinearLayout>
+
         </TableRow>
 
     </TableLayout>

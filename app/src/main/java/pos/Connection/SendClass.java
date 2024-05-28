@@ -45,6 +45,7 @@ public class SendClass extends AsyncTask <ConnectionSettingsObj,Void, String>{
                         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                         out.write(strMessage + "\n"); // отправляем на сервер
+                        Log.d (TAG, "Отправляемые данные: " + strMessage);
                         out.flush(); // чистим
                         strServAswer = in.readLine(); //получаем ответ от сервера
 //                        SendClass.this.downService();

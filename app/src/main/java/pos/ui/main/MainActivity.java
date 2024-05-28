@@ -356,7 +356,9 @@ public class MainActivity extends AppCompatActivity {
             return true;
             case R.id.action_itog:
                 Intent intentItog = new Intent(this, ItogActivity.class);
-                intentItog.putExtra("itogDay",getDayItog());
+                intentItog.putExtra("urlServer", urlServer);
+                intentItog.putExtra("portServer", portServer);
+                intentItog.putExtra("role",userRole.toString());
                 startActivity (intentItog);
                 return true;
             case R.id.action_close:
@@ -367,33 +369,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private String getDayItog() {//TODO добавить в метод, в том числе через параметр этого метода, проверку чеков по дате (любой)
-        String result="";
-        ConnectionSettingsObj connectionSettingsObj = prepareSendObjItog();
-        SendClass sendClass = new SendClass();
-        sendClass.execute(connectionSettingsObj);
-        try {
-            Log.d(TAG, "Попытка получения ответа сервера.");
-            result=sendClass.get();
-            if (!result.equals("")) {
-                Log.d (TAG, "Отправляемые данные: " + connectionSettingsObj.getStrMessage());
-            }
-        } catch (InterruptedException e){
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    private ConnectionSettingsObj prepareSendObjItog() {
-        ConnectionSettingsObj connectionSettingsObj;
-        String strFullCheck = ConnectionType.READ_DAY_ITOG.toString();
-        connectionSettingsObj = new ConnectionSettingsObj(strFullCheck,urlServer,portServer);
-        return connectionSettingsObj;
-    }
-
 
     private void saleBtnClick() {
         String result="";
@@ -411,14 +386,12 @@ public class MainActivity extends AppCompatActivity {
             sendClass.execute(connectionSettingsObj);
             if (sendClass==null) return;
             try {
-                Log.d(TAG, "Попытка получения ответа сервера.");
                 result=sendClass.get();
                 if (!result.equals("")) {
                     textCheck.append("\n"+ "Результат отправки на сервер: "
                             + result.equals(String.valueOf(checkDto.hashCode()))
                             + "\n");
-                    Log.d (TAG, "Отправляемые данные: " + connectionSettingsObj.getStrMessage());
-                }
+                    }
             } catch (InterruptedException e){
                 e.printStackTrace();
             } catch (ExecutionException e) {
@@ -441,21 +414,21 @@ public class MainActivity extends AppCompatActivity {
         Date currDate = new Date();
         Timestamp timestamp = new Timestamp(currDate.getTime());
         checkDto.setDateStamp(timestamp);
-        String strFullCheck = ConnectionType.WRITE_CHECK +  "#" + checkDto.getId().toString() + "#"
+        String requestStr = ConnectionType.WRITE_CHECK +  "#" + checkDto.getId().toString() + "#"
                 + checkDto.getPos() + "#" + checkDto.getCashierId() + "#";
 
                 //          цикл для сбора всех чеков
         for (int x = 0; x < checkDto.getGoodsDtoList().size(); x++) {
-            strFullCheck = strFullCheck + checkDto.getGoodsDtoList().get(x).getGoodsType() + "\\"
+            requestStr = requestStr + checkDto.getGoodsDtoList().get(x).getGoodsType() + "\\"
                     + checkDto.getGoodsDtoList().get(x).getQuantityGoods();
             if (x != checkDto.getGoodsDtoList().size() - 1) {
-                strFullCheck = strFullCheck + "|";
+                requestStr = requestStr + "|";
             }
         }
-        strFullCheck = strFullCheck + "#" + checkDto.getSum() + "#"
+        requestStr = requestStr + "#" + checkDto.getSum() + "#"
                 + checkDto.getDateStamp() + "#"
                 + checkDto.getDeleted().toString();
-        connectionSettingsObj = new ConnectionSettingsObj(strFullCheck,urlServer,portServer);
+        connectionSettingsObj = new ConnectionSettingsObj(requestStr,urlServer,portServer);
 
         return connectionSettingsObj;
     }
