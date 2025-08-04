@@ -9,11 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +20,8 @@ import com.example.pos_ver_01.R;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
@@ -151,6 +150,16 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e){
             e.printStackTrace();
         } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Collections.sort(goodsDtoArrayList, new Comparator<GoodsDto>(){
+                public int compare(GoodsDto g1, GoodsDto g2){
+                    return g1.getPublicName().compareTo(g2.getPublicName());
+                }
+            });
+        } catch (RuntimeException e){
             e.printStackTrace();
         }
         return goodsDtoArrayList;
