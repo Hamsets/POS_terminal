@@ -34,10 +34,8 @@ public class CheckDto{
         goodsDtoList.clear();
     }
 
-    public void addGoods(long i) {
+    public void addGoods(GoodsDto currGoodsDto) {
 
-        GoodsDto currGoodsDto = new GoodsDto();
-        currGoodsDto.setGoodsType(i);
         boolean foundGoodsInCheck = false;
 
         //если check - создан (повторный выбор товара), проверяем наличие в чека такого же товара

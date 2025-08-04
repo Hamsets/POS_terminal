@@ -4,28 +4,43 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@NoArgsConstructor
 public class GoodsDto {
 
-    private long goodsType = 0L;
+    private int goodsType = 0;
     private int quantityGoods = 1;
-
     private String imageName;
-
     private String publicName;
+    private String pathImage;
     private BigDecimal prize;
     private Boolean isActive;
+    private String forPos;
     private Boolean deleted;
-     public void setIncreaseQuantityGoods() { quantityGoods++; }
+
+    public GoodsDto (String goodsStr){
+        String[] fieldsGoodsStr = goodsStr.split("/");
+        this.goodsType = Integer.parseInt(fieldsGoodsStr[0]);
+        this.quantityGoods = Integer.parseInt(fieldsGoodsStr[1]);
+        this.imageName = fieldsGoodsStr[2];
+        this.publicName = fieldsGoodsStr[3];
+        this.pathImage = fieldsGoodsStr[4];
+        this.prize = new BigDecimal(fieldsGoodsStr[5]);
+        this.isActive = Boolean.parseBoolean(fieldsGoodsStr[6]);
+        this.forPos = fieldsGoodsStr[7];
+        this.deleted = Boolean.parseBoolean(fieldsGoodsStr[8]);
+    }
+    public void setIncreaseQuantityGoods() { quantityGoods++; }
 
     public void setDecreaseQuantityGoods () {
         quantityGoods--;
     }
 
      @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) {//FIXME не задействован путь изображения и POS
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GoodsDto goodsDto = (GoodsDto) o;
@@ -36,7 +51,7 @@ public class GoodsDto {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() {//FIXME не задействован путь изображения и POS
         return Objects.hash(goodsType, imageName, publicName, prize, isActive, deleted);
     }
 }
