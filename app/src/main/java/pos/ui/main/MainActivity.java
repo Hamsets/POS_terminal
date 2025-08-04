@@ -237,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
             if (result.equals(String.valueOf(checkDto.hashCode()))){
 //            sendClass.downService();
                 checkDto.clear();
+                for (GoodsDto goodsDto : goodsDtoArrayList) {
+                    goodsDto.setQuantityGoods(1);
+                }
                 textCheck.setText("Занесено в БД!");
             }
             saleBtn.setEnabled(true);
