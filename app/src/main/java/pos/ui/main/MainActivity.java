@@ -250,8 +250,13 @@ public class MainActivity extends AppCompatActivity {
     public ConnectionSettingsObj prepareSendObjCheck(){
 
         ConnectionSettingsObj connectionSettingsObj;
-        Date currDate = new Date();
-        Timestamp timestamp = new Timestamp(currDate.getTime());
+
+        long currTimeZone = 10800000L;//FIXME расхардкорить временную зону (в настройки)
+        long currTimeInMillis = System.currentTimeMillis() + currTimeZone;
+        Timestamp timestamp = new Timestamp(currTimeInMillis);
+
+        Log.d(TAG,"Дата текущего чека: "+ timestamp.toString());
+
         checkDto.setDateStamp(timestamp);
         String requestStr = ConnectionType.WRITE_CHECK +  "#" + checkDto.getId().toString() + "#"
                 + checkDto.getPos() + "#" + checkDto.getCashierId() + "#";
