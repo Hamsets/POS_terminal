@@ -22,7 +22,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import pos.Connection.ConnectionSettingsObj;
@@ -31,6 +30,7 @@ import pos.Connection.SendClass;
 import pos.Dto.CheckDto;
 import pos.Dto.GoodsDto;
 import pos.Dto.Role;
+import pos.ui.checks.ChecksActivity;
 import pos.ui.itog.ItogActivity;
 import pos.ui.login.LoginActivity;
 import pos.ui.settings.SettingsActivity;
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 String[] goodsArrStr = result.split("#");
                 if (goodsArrStr.length!=0){
                     for (String goodsStr : goodsArrStr){
-                        GoodsDto goods = new GoodsDto(goodsStr);
+                        GoodsDto goods = new GoodsDto(goodsStr); //FIXME добавил в GoodsDto создание не полного товара (все кроме типа и количества - null) - не работает прога
                         goodsDtoArrayList.add(goods);
 //                        Log.d(TAG, "Создан товар из ответа сервера: " + goods.toString());
                     }
@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         menu.findItem(R.id.action_itog).setTitle("Дневная выручка");
         menu.findItem(R.id.action_close).setTitle("Закрыть смену");
+        menu.findItem(R.id.action_checks).setTitle("Чеки");
         return true;
     }
 
@@ -199,6 +200,15 @@ public class MainActivity extends AppCompatActivity {
                 intentItog.putExtra("role",userRole.toString());
                 startActivity (intentItog);
                 return true;
+
+            case R.id.action_checks:
+                Intent intentChecks = new Intent(this, ChecksActivity.class);
+                intentChecks.putExtra("urlServer", urlServer);
+                intentChecks.putExtra("portServer", portServer);
+                intentChecks.putExtra("role",userRole.toString());
+                startActivity (intentChecks);
+                return true;
+
             case R.id.action_close:
                 super.finish();
                 Intent intentClose = new Intent(this, LoginActivity.class);
@@ -258,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Дата текущего чека: "+ timestamp.toString());
 
         checkDto.setDateStamp(timestamp);
-        String requestStr = ConnectionType.WRITE_CHECK +  "#" + checkDto.getId().toString() + "#"
+        String requestStr = ConnectionType.WRITE_NEW_CHECK +  "#" + checkDto.getId().toString() + "#"
                 + checkDto.getPos() + "#" + checkDto.getCashierId() + "#";
 
                 //          цикл для сбора всех чеков

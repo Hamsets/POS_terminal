@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_id_cell_goods"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:text="id товара"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/text_public_name_cell_goods"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:text="Наименование"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/text_prize_cell_goods"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:text="Цена за шт"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/text_quantity_cell_goods"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:text="Шт"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/text_cost_cell_goods"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:text="Общая цена"
+            android:gravity="center"/>
+    </LinearLayout>
+
+</LinearLayout>

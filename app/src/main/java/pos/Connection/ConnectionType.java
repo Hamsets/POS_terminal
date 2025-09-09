@@ -1,8 +1,9 @@
 package pos.Connection;
 
 public enum ConnectionType {
-    WRITE_CHECK,
-    READ_CHECK,
+    WRITE_NEW_CHECK,
+    READ_CHECK_BY_DATE,
+    DELETE_CHECK_BY_ID,
     READ_GOODS,
     WRITE_USER,
     READ_USER,

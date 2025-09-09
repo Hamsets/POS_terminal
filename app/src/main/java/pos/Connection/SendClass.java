@@ -21,7 +21,7 @@ public class SendClass extends AsyncTask <ConnectionSettingsObj,Void, String>{
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Log.d(TAG, "Начало работы AsyncTask");
+        Log.d(TAG, "Начало работы AsyncTask - отправка информации на сервер");
 
     }
     @Override

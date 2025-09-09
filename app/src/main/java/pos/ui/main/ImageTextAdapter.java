@@ -58,7 +58,7 @@ public class ImageTextAdapter extends BaseAdapter {
 
         imageView.setImageResource(mContext.getResources().getIdentifier(goodsDtoArrayList.
                 get(position).getPathImage(),"drawable",mContext.getPackageName()));
-        textView.setText(goodsDtoArrayList.get(position).getPublicName());
+        textView.setText(goodsDtoArrayList.get(position).getPublicName().toString());
 
         return grid;
     }

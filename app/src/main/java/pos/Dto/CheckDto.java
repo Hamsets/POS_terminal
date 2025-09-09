@@ -1,5 +1,7 @@
 package pos.Dto;
 
+import android.util.Log;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -21,6 +23,32 @@ public class CheckDto{
     private BigDecimal sum = new BigDecimal(0);
     private Timestamp dateStamp;
     private Boolean deleted;
+
+    public CheckDto (String checksStr) {
+        //создание чека из строки с созданием списка товаров из строки
+        String[] fieldsChecksStr = checksStr.split("\\|");
+        this.id = Long.parseLong(fieldsChecksStr[0]);
+        this.pos = fieldsChecksStr[1];
+        this.cashierId = Integer.parseInt(fieldsChecksStr[2]);
+
+        this.goodsDtoList = GoodsArrayListFromStr(fieldsChecksStr[3]);
+
+        this.sum = new BigDecimal(fieldsChecksStr[4]);
+        this.dateStamp = Timestamp.valueOf(fieldsChecksStr[5]);
+        Log.d(TAG, "Интерперетированная дата чека с сервера: " + this.dateStamp.toString());
+        this.deleted = Boolean.parseBoolean(fieldsChecksStr[6]);
+    }
+
+    //правильно создать список товаров из строки
+    private ArrayList<GoodsDto> GoodsArrayListFromStr (String str){
+        ArrayList<GoodsDto> arrayList = new ArrayList<>();
+        String[] arrGoodsStr = str.split("\\\\");
+        for (String s: arrGoodsStr){
+            arrayList.add(new GoodsDto(s));
+        }
+
+        return arrayList;
+    }
 
     public Boolean isEmpty (){
         if (goodsDtoList.isEmpty()) {

@@ -171,6 +171,8 @@ public class LoginActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         menu.findItem(R.id.action_itog).setTitle("Дневная выручка");
         menu.findItem(R.id.action_itog).setVisible(false);
+        menu.findItem(R.id.action_checks).setTitle("Чеки");
+        menu.findItem(R.id.action_checks).setVisible(false);
         menu.findItem(R.id.action_close).setTitle("Выход");
         return true;
     }

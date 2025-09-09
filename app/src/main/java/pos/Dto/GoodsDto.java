@@ -25,13 +25,23 @@ public class GoodsDto {
         String[] fieldsGoodsStr = goodsStr.split("/");
         this.goodsType = Integer.parseInt(fieldsGoodsStr[0]);
         this.quantityGoods = Integer.parseInt(fieldsGoodsStr[1]);
-        this.imageName = fieldsGoodsStr[2];
-        this.publicName = fieldsGoodsStr[3];
-        this.pathImage = fieldsGoodsStr[4];
-        this.prize = new BigDecimal(fieldsGoodsStr[5]);
-        this.isActive = Boolean.parseBoolean(fieldsGoodsStr[6]);
-        this.forPos = fieldsGoodsStr[7];
-        this.deleted = Boolean.parseBoolean(fieldsGoodsStr[8]);
+        if (fieldsGoodsStr.length != 2) {
+            this.imageName = fieldsGoodsStr[2];
+            this.publicName = fieldsGoodsStr[3];
+            this.pathImage = fieldsGoodsStr[4];
+            this.prize = new BigDecimal(fieldsGoodsStr[5]);
+            this.isActive = Boolean.parseBoolean(fieldsGoodsStr[6]);
+            this.forPos = fieldsGoodsStr[7];
+            this.deleted = Boolean.parseBoolean(fieldsGoodsStr[8]);
+        } else {
+            this.imageName = null;
+            this.publicName = null;
+            this.pathImage = null;
+            this.prize = null;
+            this.isActive = null;
+            this.forPos = null;
+            this.deleted = null;
+        }
     }
     public void setIncreaseQuantityGoods() { quantityGoods++; }
 

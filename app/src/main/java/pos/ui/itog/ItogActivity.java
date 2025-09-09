@@ -157,7 +157,7 @@ public class ItogActivity extends AppCompatActivity {
         ItogActivity.super.finish();
     }
 
-    private String getDayItog() {//TODO добавить в метод, в том числе через параметр этого метода, проверку чеков по дате (любой)
+    private String getDayItog() {
         String result="";
         ConnectionSettingsObj connectionSettingsObj = prepareSendObjItog();
         SendClass sendClass = new SendClass();
