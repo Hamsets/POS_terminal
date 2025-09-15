@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 String[] goodsArrStr = result.split("#");
                 if (goodsArrStr.length!=0){
                     for (String goodsStr : goodsArrStr){
-                        GoodsDto goods = new GoodsDto(goodsStr); //FIXME добавил в GoodsDto создание не полного товара (все кроме типа и количества - null) - не работает прога
+                        GoodsDto goods = new GoodsDto(goodsStr);
                         goodsDtoArrayList.add(goods);
 //                        Log.d(TAG, "Создан товар из ответа сервера: " + goods.toString());
                     }

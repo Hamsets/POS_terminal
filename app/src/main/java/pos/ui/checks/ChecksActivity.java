@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pos_ver_01.R;
 
@@ -44,19 +46,18 @@ public class ChecksActivity extends AppCompatActivity {
     ListView listViewChecks;
     View header;
     View footer;
-    final ArrayList<CheckDto> checkedListChecks = new ArrayList<>();
+    final ArrayList<CheckDto> notCheckedListChecks = new ArrayList<>();
     final ArrayList<String> checksListStr = new ArrayList<>();
     private Calendar cal = Calendar.getInstance();
     private int year = cal.get(Calendar.YEAR);
     private int month = cal.get(Calendar.MONTH);
     private int day = cal.get(Calendar.DAY_OF_MONTH);
+    SparseBooleanArray chosen;
 
     @Override
     protected void onCreate (@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checks);
-
-
 
         urlServer = getIntent().getStringExtra("urlServer");
         portServer = getIntent().getIntExtra("portServer", 0);
@@ -69,6 +70,8 @@ public class ChecksActivity extends AppCompatActivity {
 
         listViewChecks.addHeaderView(header);
         listViewChecks.addFooterView(footer);
+
+        listViewChecks.getCheckedItemPositions();
 
         closeBtn = (Button) findViewById(R.id.activity_checks_close_button);
         deleteBtn = (Button) findViewById(R.id.activity_checks_delete_button);
@@ -110,6 +113,21 @@ public class ChecksActivity extends AppCompatActivity {
             }
         });
 
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.activity_checks_close_button:
+                        ChecksActivity.super.finish();
+                        break;
+                    case R.id.activity_checks_delete_button:
+                        deleteBtnClick();
+                        adapter.notifyDataSetChanged();
+                        break;
+                }
+            }
+        };
+
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int yearDialog, int monthDialog, int dayDialog) {
@@ -127,20 +145,6 @@ public class ChecksActivity extends AppCompatActivity {
             }
         };
 
-        View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.activity_checks_close_button:
-                        ChecksActivity.super.finish();
-                        break;
-                    case R.id.activity_checks_delete_button:
-                        deleteBtnClick();
-                        adapter.notifyDataSetChanged();
-                        break;
-                }
-            }
-        };
         closeBtn.setOnClickListener(onClickListener);
         deleteBtn.setOnClickListener(onClickListener);
 
@@ -161,13 +165,20 @@ public class ChecksActivity extends AppCompatActivity {
 
         checkDtoArrayList.clear();
         checksListStr.clear();
+        Calendar calendar = Calendar.getInstance();
 
         try {
             checkDtoArrayList =getChecksByDate(date);
             for (int i=0; i < checkDtoArrayList.size(); i++){
+                calendar.setTimeInMillis(checkDtoArrayList.get(i).getDateStamp().getTime());
                 checksListStr.add ("#" + checkDtoArrayList.get(i).getId()
                         + "     " + checkDtoArrayList.get(i).getSum().toString()
-                        + "     " + checkDtoArrayList.get(i).getDateStamp().toString());
+                        + "     " + calendar.get(Calendar.DAY_OF_MONTH)
+                        + "/" + calendar.get(Calendar.MONTH)
+                        + "/" + calendar.get(Calendar.YEAR)
+                        + "     " + calendar.get(Calendar.HOUR_OF_DAY)
+                        + ":" + calendar.get(Calendar.MINUTE)
+                        + ":" + calendar.get(Calendar.SECOND));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -224,42 +235,59 @@ public class ChecksActivity extends AppCompatActivity {
         return connectionSettingsObj;
     }
 
-    private Boolean deleteBtnClick(){
-        String resStr="";
-        Boolean result = false;
-        SparseBooleanArray chosen = listViewChecks.getCheckedItemPositions();
+    private void deleteBtnClick(){
+        chosen = listViewChecks.getCheckedItemPositions();
         if ((chosen.size() > 0)){
-            SendClass sendClass = new SendClass();
-            String strChecks = "";
-
-            if (!checkedListChecks.isEmpty()) {checkedListChecks.clear();};
-
-            for (int i = 1; i < listViewChecks.getCount() - 1 ; ++i) {
+            CheckDialogFragment checkDialogFragment = new CheckDialogFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            int checkedCountChekcs = 0;
+            for (int i = 1; i < listViewChecks.getCount() - 1; i++) {
                 if (chosen.get(i)) {
-                    checkedListChecks.add(checkDtoArrayList.get(i-1));
-                    listViewChecks.setItemChecked(i, false);
+                    checkedCountChekcs++;
                 }
             }
+            checkDialogFragment.setTitleDialg(checkedCountChekcs + "шт.");
+            checkDialogFragment.show (transaction, "checkDialog");
+        }
+    }
 
-            for (CheckDto checkDto : checkedListChecks){
-                strChecks += checkDto.getId().toString() + "#";
-            }
+    public void okClicked() {
+        chosen = null;
+        chosen = listViewChecks.getCheckedItemPositions();
+        String resStr;
+        resStr = "false";
+        SendClass sendClass = new SendClass();
+        String strChecks = "";
 
-            sendClass.execute(prepareSendObjDeleteCheckById(strChecks));
+        if (!notCheckedListChecks.isEmpty()) {
+            notCheckedListChecks.clear();
+            for (CheckDto checkDto: checkDtoArrayList){
+                notCheckedListChecks.add(checkDto);
+            }
+        }
 
-            try {
-                resStr = sendClass.get();
-                Log.d (TAG, "Результат удаления чека: " + resStr);
-                result = Boolean.valueOf(resStr);
+        for (int i = 0; i < listViewChecks.getCount() - 1 ; i++) {
+
+
+            if (chosen.get(i+1)) {
+                strChecks = strChecks +  checkDtoArrayList.get(i).getId().toString() + "#";
+                listViewChecks.setItemChecked(i+1, false);
+
             }
-            catch (InterruptedException | ExecutionException e){
-                Log.d (TAG, e.toString());
-                return result;
-            }
+        }
+
+        sendClass.execute(prepareSendObjDeleteCheckById(strChecks));
+
+        try {
+            resStr = sendClass.get();
+            Log.d (TAG, "Результат удаления чека: " + resStr);
             getArrayCheckByDateFromServer(year, month, day);
         }
-        return result;
-    };
+        catch (InterruptedException | ExecutionException e){
+            Log.d (TAG, e.toString());
+        }
+    }
 
     private ConnectionSettingsObj prepareSendObjDeleteCheckById (String idsChecks){
         ConnectionSettingsObj connectionSettingsObj;
