@@ -21,7 +21,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pos_ver_01.R;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
@@ -33,26 +32,26 @@ import pos.Dto.CheckDto;
 import pos.Dto.Role;
 
 
-public class ChecksActivity extends AppCompatActivity {
+public class ChecksActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener{
     private Role userRole;
     private String urlServer;
     private int portServer;
     private static final String TAG = "logsChecksActivity";
-    Button closeBtn;
-    Button deleteBtn;
-    Button dateBtn;
+    private Button closeBtn;
+    private Button deleteBtn;
+    private Button dateBtn;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private ArrayList<CheckDto> checkDtoArrayList = new ArrayList<>();
-    ListView listViewChecks;
-    View header;
-    View footer;
-    final ArrayList<CheckDto> notCheckedListChecks = new ArrayList<>();
+    private ListView listViewChecks;
+    private View header;
+    private View footer;
     final ArrayList<String> checksListStr = new ArrayList<>();
     private Calendar cal = Calendar.getInstance();
     private int year = cal.get(Calendar.YEAR);
     private int month = cal.get(Calendar.MONTH);
     private int day = cal.get(Calendar.DAY_OF_MONTH);
-    SparseBooleanArray chosen;
+    private SparseBooleanArray chosen;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate (@Nullable Bundle savedInstanceState) {
@@ -64,8 +63,11 @@ public class ChecksActivity extends AppCompatActivity {
         userRole = Role.valueOf(getIntent().getStringExtra("role"));
 
         listViewChecks = (ListView) findViewById(R.id.list_view_checks);
+        closeBtn = (Button) findViewById(R.id.activity_checks_close_button);
+        deleteBtn = (Button) findViewById(R.id.activity_checks_delete_button);
+        dateBtn = (Button) findViewById(R.id.activity_checks_date_button);
 
-        header = createHeader ("Дата: " + day + "/" + month + "/" + year);
+        header = createHeader ("Дата: " + day + "/" + getCorrectMonth(month) + "/" + year);
         footer = createFooter ();
 
         listViewChecks.addHeaderView(header);
@@ -73,11 +75,6 @@ public class ChecksActivity extends AppCompatActivity {
 
         listViewChecks.getCheckedItemPositions();
 
-        closeBtn = (Button) findViewById(R.id.activity_checks_close_button);
-        deleteBtn = (Button) findViewById(R.id.activity_checks_delete_button);
-        dateBtn = (Button) findViewById(R.id.activity_checks_date_button);
-
-        final ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice,
                 checksListStr);
 
@@ -85,23 +82,8 @@ public class ChecksActivity extends AppCompatActivity {
 
         getArrayCheckByDateFromServer(year, month, day);
 
-
-//        listViewChecks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.d(TAG, "Начало обработки клика по списку чеков");
-//
-//                if (!checkedListChecks.isEmpty()) {checkedListChecks.clear();};
-//
-//                Log.d(TAG, "Очистка списка отмеченных чеков");
-//                SparseBooleanArray chosen = listViewChecks.getCheckedItemPositions();
-//                for (int i = 1; i < listViewChecks.getCount() - 1 ; ++i) {
-//                    if (chosen.get(i)) {
-//                        checkedListChecks.add(checkDtoArrayList.get(i-1));
-//                    }
-//                }
-//            }
-//        });
+        listViewChecks.setLongClickable(true);
+        listViewChecks.setOnItemLongClickListener(this::onItemLongClick);
 
         dateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +104,6 @@ public class ChecksActivity extends AppCompatActivity {
                         break;
                     case R.id.activity_checks_delete_button:
                         deleteBtnClick();
-                        adapter.notifyDataSetChanged();
                         break;
                 }
             }
@@ -138,7 +119,7 @@ public class ChecksActivity extends AppCompatActivity {
                 getArrayCheckByDateFromServer(year, month, day);
 
                 listViewChecks.removeHeaderView(header);
-                header = createHeader ("Дата: " + day + "/" + month + "/" + year);
+                header = createHeader ("Дата: " + day + "/" + getCorrectMonth(month) + "/" + year);
                 listViewChecks.addHeaderView(header);
 
                 adapter.notifyDataSetChanged();
@@ -168,7 +149,7 @@ public class ChecksActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
 
         try {
-            checkDtoArrayList =getChecksByDate(date);
+            checkDtoArrayList = getChecksByDate(date);
             for (int i=0; i < checkDtoArrayList.size(); i++){
                 calendar.setTimeInMillis(checkDtoArrayList.get(i).getDateStamp().getTime());
                 checksListStr.add ("#" + checkDtoArrayList.get(i).getId()
@@ -213,9 +194,10 @@ public class ChecksActivity extends AppCompatActivity {
                     for (String checksStr : checksArrStr){
                         CheckDto check = new CheckDto(checksStr);
                         сhecksByDateFromServer.add(check);
-//                        Log.d(TAG, "Создан чек из ответа сервера: " + goods.toString());
+                        Log.d(TAG, "Создан чек по дате из ответа сервера: " + check.toString());
                     }
-//                Log.d(TAG, "Создан объект списка чеков от сервера: " + goodsDtoArrayList.toString());
+                Log.d(TAG, "Создан объект списка чеков по дате от сервера: "
+                        + сhecksByDateFromServer.toString());
                     Log.d(TAG, "Длина списка чеков: " + сhecksByDateFromServer.size());
                 }
             }
@@ -238,7 +220,7 @@ public class ChecksActivity extends AppCompatActivity {
     private void deleteBtnClick(){
         chosen = listViewChecks.getCheckedItemPositions();
         if ((chosen.size() > 0)){
-            CheckDialogFragment checkDialogFragment = new CheckDialogFragment();
+            CheckDelConfirmDialogFragment checkDelConfirmDialogFragment = new CheckDelConfirmDialogFragment();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             int checkedCountChekcs = 0;
@@ -247,12 +229,12 @@ public class ChecksActivity extends AppCompatActivity {
                     checkedCountChekcs++;
                 }
             }
-            checkDialogFragment.setTitleDialg(checkedCountChekcs + "шт.");
-            checkDialogFragment.show (transaction, "checkDialog");
+            checkDelConfirmDialogFragment.setCountCheckText(checkedCountChekcs + "шт.");
+            checkDelConfirmDialogFragment.show (transaction, "checkDialog");
         }
     }
 
-    public void okClicked() {
+    public void checkDelConfirmOkClicked() {
         chosen = null;
         chosen = listViewChecks.getCheckedItemPositions();
         String resStr;
@@ -260,20 +242,11 @@ public class ChecksActivity extends AppCompatActivity {
         SendClass sendClass = new SendClass();
         String strChecks = "";
 
-        if (!notCheckedListChecks.isEmpty()) {
-            notCheckedListChecks.clear();
-            for (CheckDto checkDto: checkDtoArrayList){
-                notCheckedListChecks.add(checkDto);
-            }
-        }
-
         for (int i = 0; i < listViewChecks.getCount() - 1 ; i++) {
-
 
             if (chosen.get(i+1)) {
                 strChecks = strChecks +  checkDtoArrayList.get(i).getId().toString() + "#";
                 listViewChecks.setItemChecked(i+1, false);
-
             }
         }
 
@@ -281,12 +254,46 @@ public class ChecksActivity extends AppCompatActivity {
 
         try {
             resStr = sendClass.get();
-            Log.d (TAG, "Результат удаления чека: " + resStr);
+            Log.d (TAG, "Результат удаления чека (в основном окне чеков): " + resStr);
             getArrayCheckByDateFromServer(year, month, day);
         }
         catch (InterruptedException | ExecutionException e){
             Log.d (TAG, e.toString());
         }
+    }
+
+    //TODO нужно добавить подтверждение удаления через диалог
+    public void goodsDelCheckClicked(CheckDto currCheck, int position){
+
+        String resStr;
+        resStr = "false";
+        SendClass sendClass = new SendClass();
+        String strChecks = "";
+
+        if (currCheck != null) {
+            strChecks = currCheck.getId().toString() + "#";
+        }
+
+        sendClass.execute(prepareSendObjDeleteCheckById(strChecks));
+
+        try {
+            resStr = sendClass.get();
+            Log.d (TAG, "Результат удаления чека (в диалоге детализации чека): " + resStr);
+        }
+        catch (InterruptedException | ExecutionException e){
+            Log.d (TAG, e.toString());
+        }
+
+        getArrayCheckByDateFromServer(year, month, day);
+
+//        Log.d (TAG, "checkListStr после удаления из детализации чека: "
+//                +  checksListStr.toString());
+//        Log.d (TAG, "checkDtoArrayList после удаления из детализации чека: "
+//                + checkDtoArrayList.toString());
+
+        adapter.notifyDataSetChanged();
+
+
     }
 
     private ConnectionSettingsObj prepareSendObjDeleteCheckById (String idsChecks){
@@ -296,9 +303,35 @@ public class ChecksActivity extends AppCompatActivity {
         return connectionSettingsObj;
     }
 
+    private int getCorrectMonth(int month){
+        int correctMonth = month +1;
+        return correctMonth;
+    }
+
     @Override
     protected void onStop() {
         Log.d(TAG,"Закрытие окна чеков");
         super.onStop();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+        if (position !=0){
+
+            CheckDto checkDto = checkDtoArrayList.get(position-1);
+
+            CheckGoodsDialogFragment checkGoodsDialogFragment = new CheckGoodsDialogFragment();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+
+            checkGoodsDialogFragment.setPosition(position -1);
+            checkGoodsDialogFragment.setCurrCheck(checkDto);
+            checkGoodsDialogFragment.show (transaction, "checkGoodsDialog");
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

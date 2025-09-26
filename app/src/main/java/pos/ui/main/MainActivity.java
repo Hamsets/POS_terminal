@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             Collections.sort(goodsDtoArrayList, new Comparator<GoodsDto>(){
-                public int compare(GoodsDto g1, GoodsDto g2){
+                public int compare(GoodsDto g1, GoodsDto g2){//FIXME настроить переключатель сортировки в админке
                     return g1.getPublicName().compareTo(g2.getPublicName());
                 }
             });
