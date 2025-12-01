@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pos_ver_01.R;
 
-import pos.Dto.Role;
+import pos.Entities.Role;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -19,10 +19,11 @@ public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences settings;
     private static final String PREF_URL_SERVER = "urlServer";
     private static final String PREF_PORT_SERVER = "portServer";
-    private static final String PREF_POS_NAME = "posName";
+//    private static final String PREF_POS_NAME = "posName";
+    private static final String PREF_POS_ID = "posId";
     private String urlServer;
     private int portServer;
-    private String posName;
+    private int posId;
     private Role userRole;
     Button saveBtn;
     Button closeBtn;
@@ -74,6 +75,8 @@ public class SettingsActivity extends AppCompatActivity {
         } catch (NullPointerException e) {
             Log.d(TAG, "Меню запущено из LoginActivity, поля ввода не управляются.");}
 
+//        setSharedProp();
+
         settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
 
         urlServer = settings.getString(getString(R.string.urlServer),"");
@@ -82,12 +85,14 @@ public class SettingsActivity extends AppCompatActivity {
         portServer = settings.getInt(getString(R.string.portServer), 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
 
-        posName = settings.getString(PREF_POS_NAME, "");
-        Log.d(TAG, "Получено название кассы: " + posName);
+//        posId = Integer.parseInt(settings.getString(PREF_POS_NAME,""));
+
+        posId = settings.getInt(PREF_POS_ID, 0);
+        Log.d(TAG, "Получено id кассы: " + posId);
 
         ipEditText.setText(urlServer);
         portEditText.setText(String.valueOf(portServer));
-        posEditText.setText(posName);
+        posEditText.setText(String.valueOf(posId));
 
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -116,18 +121,18 @@ public class SettingsActivity extends AppCompatActivity {
 
         urlServer = String.valueOf(ipEditText.getText());
         portServer = Integer.parseInt(portEditText.getText().toString());
-        posName = String.valueOf(posEditText.getText());
+        posId = Integer.parseInt(posEditText.getText().toString());
 
         if (!urlServer.isEmpty() && isIP(urlServer)) {
 
             SharedPreferences.Editor prefEditor = settings.edit();
             prefEditor.putString(PREF_URL_SERVER, urlServer);
             prefEditor.putInt(PREF_PORT_SERVER, portServer);
-            prefEditor.putString(PREF_POS_NAME, posName);
+            prefEditor.putInt(PREF_POS_ID, posId);
             prefEditor.apply();
             Log.d(TAG,"Внесен новый адрес сервера: " + urlServer);
             Log.d(TAG,"Внесен новый порт сервера: " + portServer);
-            Log.d(TAG,"Внесен новый идентификатор точки продаж: " + posName);
+            Log.d(TAG,"Внесен новый идентификатор точки продаж: " + posId);
         }
     }
 
@@ -142,6 +147,11 @@ public class SettingsActivity extends AppCompatActivity {
         }
         else return false;
     }
+//    private void setSharedProp (){
+//        SharedPreferences.Editor prefEditor = settings.edit();
+//        prefEditor.putInt("posId", 1);
+//        prefEditor.apply();
+//    }
 
     @Override
     protected void onStop() {

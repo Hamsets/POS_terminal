@@ -29,7 +29,8 @@ import pos.Connection.ConnectionSettingsObj;
 import pos.Connection.ConnectionType;
 import pos.Connection.SendClass;
 import pos.Dto.CheckDto;
-import pos.Dto.Role;
+import pos.Entities.Check;
+import pos.Entities.Role;
 
 
 public class ChecksActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener{
@@ -52,6 +53,7 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
     private int day = cal.get(Calendar.DAY_OF_MONTH);
     private SparseBooleanArray chosen;
     private ArrayAdapter<String> adapter;
+    private int posId;
 
     @Override
     protected void onCreate (@Nullable Bundle savedInstanceState) {
@@ -61,6 +63,7 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
         urlServer = getIntent().getStringExtra("urlServer");
         portServer = getIntent().getIntExtra("portServer", 0);
         userRole = Role.valueOf(getIntent().getStringExtra("role"));
+        posId = getIntent().getIntExtra("posId",0);
 
         listViewChecks = (ListView) findViewById(R.id.list_view_checks);
         closeBtn = (Button) findViewById(R.id.activity_checks_close_button);
@@ -149,7 +152,7 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
         Calendar calendar = Calendar.getInstance();
 
         try {
-            checkDtoArrayList = getChecksByDate(date);
+            checkDtoArrayList = getChecksByDate(date, posId);
             for (int i=0; i < checkDtoArrayList.size(); i++){
                 calendar.setTimeInMillis(checkDtoArrayList.get(i).getDateStamp().getTime());
                 checksListStr.add ("#" + checkDtoArrayList.get(i).getId()
@@ -179,26 +182,28 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
 
     //получаем чек с сервера по дате из диалога даты
     @Nullable
-    private ArrayList<CheckDto> getChecksByDate(String date) {
-        ArrayList<CheckDto> сhecksByDateFromServer = new ArrayList<>();
+    private ArrayList<CheckDto> getChecksByDate(String date, int pos) {
+        ArrayList<CheckDto> checksArrList = new ArrayList<>();
         String result="";
         SendClass sendClass = new SendClass();
-        sendClass.execute(prepareSendObjCheckByDate(date));
+        sendClass.execute(prepareSendObjCheckByDate(date, pos));
         try {
             result=sendClass.get();
 
             if (!result.equals("")) {
                 Log.d(TAG, "Ответ от сервера по запросу чеков по дате: " + result);
                 String[] checksArrStr = result.split("#");
+
                 if (checksArrStr.length!=0){
                     for (String checksStr : checksArrStr){
-                        CheckDto check = new CheckDto(checksStr);
-                        сhecksByDateFromServer.add(check);
-                        Log.d(TAG, "Создан чек по дате из ответа сервера: " + check.toString());
+                        Check check = CheckDto.convertFromJson(checksStr);
+                        CheckDto checkDto = new CheckDto(check);
+                        checksArrList.add(checkDto);
+                        Log.d(TAG, "Создан чек по дате из ответа сервера: " + checkDto.toString());
                     }
                 Log.d(TAG, "Создан объект списка чеков по дате от сервера: "
-                        + сhecksByDateFromServer.toString());
-                    Log.d(TAG, "Длина списка чеков: " + сhecksByDateFromServer.size());
+                        + checksArrList.toString());
+                    Log.d(TAG, "Длина списка чеков: " + checksArrList.size());
                 }
             }
 
@@ -207,12 +212,12 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        return сhecksByDateFromServer;
+        return checksArrList;
     }
 
-    private ConnectionSettingsObj prepareSendObjCheckByDate(String date) {
+    private ConnectionSettingsObj prepareSendObjCheckByDate(String date, int pos) {
         ConnectionSettingsObj connectionSettingsObj;
-        String requestStr = ConnectionType.READ_CHECK_BY_DATE.toString() + "#" + date;
+        String requestStr = ConnectionType.READ_CHECK_BY_DATE + "#" + date + "#" + pos;
         connectionSettingsObj = new ConnectionSettingsObj(requestStr,urlServer,portServer);
         return connectionSettingsObj;
     }
@@ -245,7 +250,7 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
         for (int i = 0; i < listViewChecks.getCount() - 1 ; i++) {
 
             if (chosen.get(i+1)) {
-                strChecks = strChecks +  checkDtoArrayList.get(i).getId().toString() + "#";
+                strChecks = strChecks +  checkDtoArrayList.get(i).getId() + "#";
                 listViewChecks.setItemChecked(i+1, false);
             }
         }
@@ -271,7 +276,7 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
         String strChecks = "";
 
         if (currCheck != null) {
-            strChecks = currCheck.getId().toString() + "#";
+            strChecks = currCheck.getId() + "#";
         }
 
         sendClass.execute(prepareSendObjDeleteCheckById(strChecks));

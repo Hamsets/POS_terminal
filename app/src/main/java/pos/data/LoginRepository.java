@@ -1,7 +1,8 @@
 package pos.data;
 
 import pos.Connection.ConnectionSettingsObj;
-import pos.data.model.LoggedInUser;
+import pos.Entities.User;
+
 
 /**
  * Класс, который запрашивает аутентификацию и информацию о пользователе из удаленного источника
@@ -19,7 +20,8 @@ public class LoginRepository {
     // Если пользовательские реквизиты кэшируются в локальном хранилище, рекомендуется их шифрование
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
+//    private LoggedInUser user = null;
+    private User user = null;
 
     // private constructor : singleton access
     private LoginRepository(LoginDataSource dataSource) {
@@ -42,17 +44,17 @@ public class LoginRepository {
         dataSource.logout();
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
+    private void setLoggedInUser(User user) {
         this.user = user;
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<LoggedInUser> login(ConnectionSettingsObj connectionSettingsObj) {
+    public Result<User> login(ConnectionSettingsObj connectionSettingsObj) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(connectionSettingsObj);
+        Result<User> result = dataSource.login(connectionSettingsObj);
         if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+            setLoggedInUser(((Result.Success<User>) result).getData());
         }
         return result;
     }

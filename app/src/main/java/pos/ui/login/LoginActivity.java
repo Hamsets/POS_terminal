@@ -35,12 +35,12 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
 
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = "logsLoginActivity";
     private SharedPreferences settings;
-    private static final String PREF_POS_NAME = "posName";
+    private static final String PREF_POS_ID = "posId";
     private String urlServer;
     private int portServer;
-    private String posName;
+    private int posId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,8 @@ public class LoginActivity extends AppCompatActivity {
         portServer = settings.getInt("portServer", 0);
         Log.d(TAG, "Получен номер порта: " + portServer);
 
-        posName = settings.getString(PREF_POS_NAME, "");
-        Log.d(TAG, "Получено название кассы: " + posName);
+        posId = settings.getInt(PREF_POS_ID,0);
+        Log.d(TAG, "Получен ID кассы: " + posId);
 
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -148,13 +148,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
+        String welcome = getString(R.string.welcome) + model.getFirstName() + " " + model.getSurName();
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("id", model.getId());
-        intent.putExtra("role", model.getRole().toString());
+        intent.putExtra("loggedInUserView", model.convertToJson());
+
         intent.putExtra("urlServer", model.getUrlServer());
         intent.putExtra("portServer", model.getPortServer());
-        intent.putExtra("posName", posName);
+
+        // Считывание Id точки продаж берется из настроек приложения
+        //        intent.putExtra("posId", posId);
         intent.putExtra("startActivity", "LoginActivity");
 
         startActivity(intent);

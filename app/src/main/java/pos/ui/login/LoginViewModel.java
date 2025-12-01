@@ -1,19 +1,16 @@
 package pos.ui.login;
 
 import android.util.Patterns;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.example.pos_ver_01.R;
-
 import pos.Connection.ConnectionSettingsObj;
 import pos.Connection.ConnectionType;
+import pos.Dto.UsersDto;
+import pos.Entities.User;
 import pos.data.LoginRepository;
 import pos.data.Result;
-import pos.data.model.LoggedInUser;
-//import pos.R;
 
 public class LoginViewModel extends ViewModel {
 
@@ -41,12 +38,13 @@ public class LoginViewModel extends ViewModel {
         ConnectionSettingsObj connectionSettingsObj = prepareSendObj(username, password,
                 urlServer,portServer);
 
-        Result<LoggedInUser> result = loginRepository.login(connectionSettingsObj);
+        Result<User> result = loginRepository.login(connectionSettingsObj);
 
         if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName(),
-                    data.getUserId(), data.getRole(), urlServer, portServer)));
+            User data = ((Result.Success<User>) result).getData();
+            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getFirstName(),
+                    data.getLastName(), data.getSurName(), data.getEmail(), data.getRole(),
+                    data.getUserId(), data.getRating(), urlServer, portServer)));
         } else {
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }
@@ -55,7 +53,10 @@ public class LoginViewModel extends ViewModel {
     public ConnectionSettingsObj prepareSendObj(String username, String password, String urlServer,
                                                 int portServer){
         ConnectionSettingsObj connectionSettingsObj;
-        String str = ConnectionType.COMPARE_USER +  "#" + username + "#" + password;
+        User user = new User();
+        user.setEmail(username);
+        user.setPassword(password);
+        String str = ConnectionType.COMPARE_USER +  "#" + UsersDto.convertToJson(user);
         connectionSettingsObj = new ConnectionSettingsObj(str,urlServer,portServer);
         return connectionSettingsObj;
     }

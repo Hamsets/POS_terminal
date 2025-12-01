@@ -2,11 +2,11 @@ package pos.data.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import pos.Dto.Role;
+import pos.Entities.Role;
 
 /**
  * Класс который собирает информацю о вошедших в систему пользователях, полученных от LoginRepository
- *
+ * УДАЛИТЬ!!!!!!!!!!!!!!
  * Data class that captures user information for logged in users retrieved from LoginRepository
  */
 @Getter

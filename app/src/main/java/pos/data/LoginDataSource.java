@@ -3,14 +3,13 @@ package pos.data;
 import android.util.Log;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.concurrent.ExecutionException;
 
 import pos.Connection.ConnectionSettingsObj;
 import pos.Connection.SendClass;
-import pos.Dto.Role;
 import pos.Dto.UsersDto;
-import pos.data.model.LoggedInUser;
+import pos.Entities.User;
+
 
 /**
  * Класс, который обрабатывает аутентификацию с использованием учетных данных для входа и получает информацию о пользователе
@@ -20,7 +19,7 @@ import pos.data.model.LoggedInUser;
 public class LoginDataSource {
     private static final String TAG = "logsLoginDataSource";
     private String answer = "";
-    public Result<LoggedInUser> login(ConnectionSettingsObj connectionSettingsObj) {
+    public Result<User> login(ConnectionSettingsObj connectionSettingsObj) {
 
 
         try {
@@ -46,10 +45,8 @@ public class LoginDataSource {
 
             if (!answer.isEmpty() && !answer.equals("-1")) {
                 Log.d(TAG, "Логин принят сервером");
-                UsersDto userDto = userMapper(answer);
-                LoggedInUser trueUser = new LoggedInUser(userDto.getId(),
-                        userDto.getLastName() + " " + userDto.getSurName(), userDto.getRole());
-                return new Result.Success<>(trueUser);
+                User logedInUser = userMapper(answer);
+                return new Result.Success<>(logedInUser);
             } else {
 //                LoggedInUser fakeUser = new LoggedInUser(0, "Jane Doe");
                 Log.d(TAG, "Логин отвергнут сервером!");
@@ -63,16 +60,11 @@ public class LoginDataSource {
     public void logout() {
         // TODO: revoke authentication
     }
-    private UsersDto userMapper (String userStr){
+    private User userMapper (String userStr){
 
         try {
+            return UsersDto.convertFromJson(userStr);
 //            userStr.replaceAll("[^A-Za-zА-Яа-я0-9 ]", "");
-            String[] arrayUserCode = userStr.split("#");
-            UsersDto userDto = new UsersDto(Integer.parseInt(arrayUserCode[0]),
-                    arrayUserCode[1], arrayUserCode[2], arrayUserCode[3], arrayUserCode[4],
-                    Role.valueOf(arrayUserCode[5]), arrayUserCode[6],
-                    new BigDecimal(arrayUserCode[7]), Boolean.parseBoolean(arrayUserCode[8]));
-            return userDto;
         } catch (Exception e) {
             Log.d(TAG, "Ошибка создания User из ответа сервера. " + e);
             return null;

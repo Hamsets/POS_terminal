@@ -1,4 +1,4 @@
-package pos.Dto;
+package pos.Entities;
 
 public enum Role {
     ADMIN,

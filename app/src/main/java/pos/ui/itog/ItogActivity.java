@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
 import pos.Connection.ConnectionSettingsObj;
 import pos.Connection.ConnectionType;
 import pos.Connection.SendClass;
-import pos.Dto.Role;
+import pos.Entities.Role;
 
 public class ItogActivity extends AppCompatActivity {
     private Role userRole;
@@ -31,11 +31,14 @@ public class ItogActivity extends AppCompatActivity {
     EditText itogCurrDayEdit;
     EditText itogByDateEdit;
     TextView startDateText;
+    private String startDayStr;
     TextView endDateText;
+    private String endDayStr;
     TextView itogoOnDateText;
     TextView dateDivText;
     private String urlServer;
     private int portServer;
+    private int posId;
     private DatePickerDialog.OnDateSetListener mDateStartSetListener;
     private DatePickerDialog.OnDateSetListener mDateEndSetListener;
     private static final String TAG = "logsItogActivity";
@@ -57,6 +60,7 @@ public class ItogActivity extends AppCompatActivity {
         urlServer=getIntent().getStringExtra("urlServer");
         portServer=getIntent().getIntExtra("portServer",0);
         userRole = Role.valueOf(getIntent().getStringExtra("role"));
+        posId = getIntent().getIntExtra("posId",0);
 
         if (userRole.equals(Role.ADMIN) || userRole.equals((Role.MANAGER))) {
             itogoOnDateText.setVisibility(View.VISIBLE);
@@ -95,6 +99,7 @@ public class ItogActivity extends AppCompatActivity {
                 month = month + 1;
                 String date = day + "/" + month + "/" + year;
                 startDateText.setText(date);
+                startDayStr = date;
             }
         };
 
@@ -118,6 +123,7 @@ public class ItogActivity extends AppCompatActivity {
                 month = month + 1;
                 String date = day + "/" + month + "/" + year;
                 endDateText.setText(date);
+                endDayStr = date;
             }
         };
 
@@ -174,8 +180,10 @@ public class ItogActivity extends AppCompatActivity {
 
     private ConnectionSettingsObj prepareSendObjItog() {
         ConnectionSettingsObj connectionSettingsObj;
-        String requestStr = ConnectionType.READ_DAY_ITOG.toString() + "#" + startDateText.getText()
-                + "#" + endDateText.getText();
+        String requestStr = ConnectionType.READ_DAY_ITOG.toString() + "#"
+                + startDayStr + "#"
+                + endDayStr  + "#"
+                + posId;
         connectionSettingsObj = new ConnectionSettingsObj(requestStr,urlServer,portServer);
         return connectionSettingsObj;
     }

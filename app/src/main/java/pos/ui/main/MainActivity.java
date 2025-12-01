@@ -29,9 +29,13 @@ import pos.Connection.ConnectionType;
 import pos.Connection.SendClass;
 import pos.Dto.CheckDto;
 import pos.Dto.GoodsDto;
-import pos.Dto.Role;
+import pos.Entities.Goods;
+import pos.Entities.Pos;
+import pos.Entities.Role;
+import pos.Entities.User;
 import pos.ui.checks.ChecksActivity;
 import pos.ui.itog.ItogActivity;
+import pos.ui.login.LoggedInUserView;
 import pos.ui.login.LoginActivity;
 import pos.ui.settings.SettingsActivity;
 
@@ -40,18 +44,20 @@ public class MainActivity extends AppCompatActivity {
     private String startActivity;
     private String urlServer;
     private int portServer;
-    private String posName;
-    SharedPreferences settings;
-    private int userId;
-    private Role userRole;
+    private Pos pos;
+    private int posId;
+//    private static final String PREF_POS_ID = "posId";
+    SharedPreferences settings; //FIXME попробовать в private
+    private User user;
     TextView textCheck;
     Button saleBtn;
     Button cancelBtn;
-    private CheckDto checkDto = new CheckDto(0L, posName, userId,
-                new ArrayList<>(),null,null,false);
+    private CheckDto checkDto;
 
-    ArrayList<GoodsDto> goodsDtoArrayList;
-    ImageTextAdapter imageTextAdapter;
+    ArrayList<GoodsDto> goodsDtoArrayList;  //FIXME попробовать в private
+    ImageTextAdapter imageTextAdapter; //FIXME попробовать в private
+
+    private LoggedInUserView loggedInUserView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,32 +65,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkDto = new CheckDto(0, null, null,
+                new ArrayList<>(),null,null,false);
+
         GridView gridview = (GridView) findViewById(R.id.gridview);
         imageTextAdapter = new ImageTextAdapter(this);
         gridview.setAdapter(imageTextAdapter);
         gridview.setOnItemClickListener(gridviewOnItemClickListener);
 
-        userId = getIntent().getIntExtra("id",0);
-        userRole = Role.valueOf(getIntent().getStringExtra("role"));
+        loggedInUserView = LoggedInUserView.convertFromJson(getIntent().getStringExtra(
+                "loggedInUserView"));
+        user = loggedInUserView.createUserForView();
+
         settings = getSharedPreferences(getString(R.string.properties), MODE_PRIVATE);
         urlServer = getIntent().getStringExtra("urlServer");
         portServer = getIntent().getIntExtra("portServer", 0);
-        posName = getIntent().getStringExtra("posName");
+        posId = settings.getInt("posId",2);
+        pos = new Pos();
+        pos.setPosId(posId);
         startActivity = getIntent().getStringExtra("startActivity");
-
 
         Log.d(TAG, "Получен IP адрес: " + urlServer);
         Log.d(TAG, "Получен номер порта: " + portServer);
-        Log.d(TAG, "Получено название кассы: " + posName);
+        Log.d(TAG, "Получено название кассы: " + pos);
         Log.d(TAG, "Текущее activity запущено от: " + startActivity);
-
 
         //запустим приложение в горизонтальном ориентировании
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         textCheck = (TextView) findViewById(R.id.textCheck);
 
-        goodsDtoArrayList = readGoodsByPosFromServer(-1, posName);
+        goodsDtoArrayList = readGoodsByIdFromServer(-1);
 
         saleBtn = (Button) findViewById(R.id.saleBtn);
         cancelBtn = (Button) findViewById(R.id.cancelBtn);
@@ -126,11 +137,11 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private ArrayList<GoodsDto> readGoodsByPosFromServer(int goodsType, String posName) {
-        ArrayList<GoodsDto> goodsDtoArrayList = new ArrayList<>();
+    private ArrayList<GoodsDto> readGoodsByIdFromServer(int goodsId) {
+        ArrayList<GoodsDto> goodsArrayList = new ArrayList<>();
         String result="";
         SendClass sendClass =  new SendClass();
-        sendClass.execute(prepareSendObjGoods(goodsType, posName));
+        sendClass.execute(prepareSendObjGoods(goodsId));
         if (sendClass==null) return null;
         try {
             result=sendClass.get();
@@ -139,12 +150,13 @@ public class MainActivity extends AppCompatActivity {
                 String[] goodsArrStr = result.split("#");
                 if (goodsArrStr.length!=0){
                     for (String goodsStr : goodsArrStr){
-                        GoodsDto goods = new GoodsDto(goodsStr);
-                        goodsDtoArrayList.add(goods);
+                        Goods goods = new Goods();
+                        goods = GoodsDto.convertFromJson(goodsStr);
+                        goodsArrayList.add(new GoodsDto(goods));
 //                        Log.d(TAG, "Создан товар из ответа сервера: " + goods.toString());
                     }
-//                Log.d(TAG, "Создан объект списка товаров от сервера: " + goodsDtoArrayList.toString());
-                Log.d(TAG, "Длина списка товаров: " + goodsDtoArrayList.size());
+//                Log.d(TAG, "Создан объект списка товаров от сервера: " + goodsArrayList.toString());
+                Log.d(TAG, "Длина списка товаров: " + goodsArrayList.size());
                 }
             }
         } catch (InterruptedException e){
@@ -154,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            Collections.sort(goodsDtoArrayList, new Comparator<GoodsDto>(){
+            Collections.sort(goodsArrayList, new Comparator<GoodsDto>(){
                 public int compare(GoodsDto g1, GoodsDto g2){//FIXME настроить переключатель сортировки в админке
                     return g1.getPublicName().compareTo(g2.getPublicName());
                 }
@@ -162,12 +174,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (RuntimeException e){
             e.printStackTrace();
         }
-        return goodsDtoArrayList;
+        return goodsArrayList;
     }
 
-    private ConnectionSettingsObj prepareSendObjGoods(int goodsType, String posName) {
+    private ConnectionSettingsObj prepareSendObjGoods(int goodsType) {
         ConnectionSettingsObj connectionSettingsObj;
-        String requestStr = ConnectionType.READ_GOODS +  "#" + goodsType + "#" + posName;
+        String requestStr = ConnectionType.READ_GOODS +  "#" + goodsType;
         connectionSettingsObj = new ConnectionSettingsObj(requestStr,urlServer,portServer);
         return connectionSettingsObj;
     }
@@ -190,14 +202,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity = "MainActivity";
                 intent.putExtra("startActivity",startActivity);
-                intent.putExtra("role",userRole.toString());
+                intent.putExtra("role",user.getRole().toString());
                 startActivity(intent);
             return true;
             case R.id.action_itog:
                 Intent intentItog = new Intent(this, ItogActivity.class);
                 intentItog.putExtra("urlServer", urlServer);
                 intentItog.putExtra("portServer", portServer);
-                intentItog.putExtra("role",userRole.toString());
+                intentItog.putExtra("role",user.getRole().toString());
+                intentItog.putExtra("posId", pos.getPosId());
                 startActivity (intentItog);
                 return true;
 
@@ -205,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intentChecks = new Intent(this, ChecksActivity.class);
                 intentChecks.putExtra("urlServer", urlServer);
                 intentChecks.putExtra("portServer", portServer);
-                intentChecks.putExtra("role",userRole.toString());
+                intentChecks.putExtra("role",user.getRole().toString());
+                intentChecks.putExtra("posId", pos.getPosId());
                 startActivity (intentChecks);
                 return true;
 
@@ -224,18 +238,20 @@ public class MainActivity extends AppCompatActivity {
             saleBtn.setEnabled(false);
             cancelBtn.setEnabled(false);
 
-            checkDto.setCashierId(userId);
-            checkDto.setPos(posName);
+            checkDto.setUser(user);
+            checkDto.setPos(pos);
             checkDto.setDeleted(false);
 
             SendClass sendClass =  new SendClass();
             sendClass.execute(prepareSendObjCheck());
             if (sendClass==null) return;
+            int hash = checkDto.hashCode();
+            String hashOnClient = String.valueOf(hash);
             try {
                 result=sendClass.get();
                 if (!result.equals("")) {
                     textCheck.append("\n"+ "Результат отправки на сервер: "
-                            + result.equals(String.valueOf(checkDto.hashCode()))
+                            + result.equals(hashOnClient)
                             + "\n");
                     }
             } catch (InterruptedException e){
@@ -244,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (result.equals(String.valueOf(checkDto.hashCode()))){
+            if (result.equals(hashOnClient)){
 //            sendClass.downService();
                 checkDto.clear();
                 for (GoodsDto goodsDto : goodsDtoArrayList) {
@@ -268,20 +284,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"Дата текущего чека: "+ timestamp.toString());
 
         checkDto.setDateStamp(timestamp);
-        String requestStr = ConnectionType.WRITE_NEW_CHECK +  "#" + checkDto.getId().toString() + "#"
-                + checkDto.getPos() + "#" + checkDto.getCashierId() + "#";
 
-                //          цикл для сбора всех чеков
-        for (int x = 0; x < checkDto.getGoodsDtoList().size(); x++) {
-            requestStr = requestStr + checkDto.getGoodsDtoList().get(x).getGoodsType() + "\\"
-                    + checkDto.getGoodsDtoList().get(x).getQuantityGoods();
-            if (x != checkDto.getGoodsDtoList().size() - 1) {
-                requestStr = requestStr + "|";
-            }
-        }
-        requestStr = requestStr + "#" + checkDto.getSum() + "#"
-                + checkDto.getDateStamp() + "#"
-                + checkDto.getDeleted().toString();
+        String requestStr = ConnectionType.WRITE_NEW_CHECK +  "#" + CheckDto.convertToJson(checkDto.getEntity());
         connectionSettingsObj = new ConnectionSettingsObj(requestStr,urlServer,portServer);
 
         return connectionSettingsObj;
@@ -299,10 +303,10 @@ public class MainActivity extends AppCompatActivity {
         if (!checkDto.isEmpty()){
             textCheck.setText("");
             int strId;
-            for (int y = 0; y < checkDto.getGoodsDtoList().size(); y++) {
-                  textCheck.append(checkDto.getGoodsDtoList().get(y).getPublicName() + "*"
-                        + checkDto.getGoodsDtoList().get(y).getQuantityGoods() + "\t"
-                        + summGoods(checkDto.getGoodsDtoList().get(y))  + "\n");
+            for (int y = 0; y < checkDto.getGoodsList().size(); y++) {
+                  textCheck.append(checkDto.getGoodsList().get(y).getPublicName() + "*"
+                        + checkDto.getGoodsList().get(y).getQuantityGoods() + "\t"
+                        + summGoods(checkDto.getGoodsList().get(y))  + "\n");
             }
             textCheck.append("---------------------------" + "\n");
             textCheck.append("Итого: " + itogCheck(checkDto) + "руб.");
@@ -311,9 +315,9 @@ public class MainActivity extends AppCompatActivity {
 
     //сумма одтотипных товаров в строке чека
 
-    public BigDecimal summGoods (GoodsDto goodsDto){
-        int i = goodsDto.getQuantityGoods();
-        BigDecimal cena =  goodsDto.getPrize().multiply(new BigDecimal(i));
+    public BigDecimal summGoods (Goods goods){
+        int i = goods.getQuantityGoods();
+        BigDecimal cena =  goods.getPrize().multiply(new BigDecimal(i));
         cena = cena.setScale(2, BigDecimal.ROUND_HALF_UP);
         return cena;
     }
@@ -322,8 +326,8 @@ public class MainActivity extends AppCompatActivity {
     public BigDecimal itogCheck(CheckDto checkDto){
         double x = 0;
         BigDecimal checkItog;
-        for (int z = 0; z < checkDto.getGoodsDtoList().size(); z++) {
-            x = x + summGoods(checkDto.getGoodsDtoList().get(z)).doubleValue();
+        for (int z = 0; z < checkDto.getGoodsList().size(); z++) {
+            x = x + summGoods(checkDto.getGoodsList().get(z)).doubleValue();
         }
         checkItog = new BigDecimal(x);
         checkItog = checkItog.setScale(2, BigDecimal.ROUND_HALF_UP); //задаем округление до 2 знаков

@@ -1,7 +1,5 @@
 package pos.ui.checks;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,18 +8,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.pos_ver_01.R;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import lombok.NonNull;
 import lombok.Setter;
 import pos.Dto.CheckDto;
 import pos.Dto.GoodsDto;
+import pos.Entities.Goods;
 
 @Setter
 public class CheckGoodsDialogFragment extends DialogFragment {
@@ -67,16 +65,16 @@ public class CheckGoodsDialogFragment extends DialogFragment {
     }
 
     private void appendGoodsFromCheck(CheckDto checkDto){
-        ArrayList<GoodsDto> goodsArr = checkDto.getGoodsDtoList();
+        List<Goods> goodsArr = checkDto.getGoodsList();
 
-        for (GoodsDto goodsDto: goodsArr){
+        for (Goods goods: goodsArr){
             String goodsStr = "";
-            goodsStr = goodsDto.getPublicName() + "    "
-                    +  goodsDto.getQuantityGoods() + "x"
-                    +  goodsDto.getPrize() + "     "
-                    +  goodsDto.getPrize().multiply(BigDecimal.valueOf(goodsDto.getQuantityGoods()))
+            goodsStr = goods.getPublicName() + "    "
+                    +  goods.getQuantityGoods() + "x"
+                    +  goods.getPrize() + "     "
+                    +  goods.getPrize().multiply(BigDecimal.valueOf(goods.getQuantityGoods()))
                     +  "\n";
-            goods.append(goodsStr);
+            this.goods.append(goodsStr);
 
         }
         goods.append("___________________________" + "\n");
