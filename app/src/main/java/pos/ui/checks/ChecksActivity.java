@@ -224,7 +224,7 @@ public class ChecksActivity extends AppCompatActivity implements AdapterView.OnI
 
     private void deleteBtnClick(){
         chosen = listViewChecks.getCheckedItemPositions();
-        if ((chosen.size() > 0)){
+        if (chosen.size() > 0 && !checkDtoArrayList.isEmpty()){
             CheckDelConfirmDialogFragment checkDelConfirmDialogFragment = new CheckDelConfirmDialogFragment();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
